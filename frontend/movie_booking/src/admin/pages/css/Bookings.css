@@ -1,0 +1,129 @@
+:root {
+  --dark-primary: #2C2B30;
+  --dark-secondary: #4F4F51;
+  --light-gray: #D6D6D6;
+  --accent-soft: #F2C4CE;
+  --accent-strong: #F58F7C;
+}
+
+/* Page */
+.bookings-page {
+  background-color: var(--dark-primary);
+  padding: 30px;
+  min-height: 100vh;
+}
+
+.bookings-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--accent-strong);
+  margin-bottom: 25px;
+}
+
+/* ===================== */
+/* DESKTOP TABLE */
+/* ===================== */
+
+.bookings-table-wrapper {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  overflow-x: auto;
+}
+
+.bookings-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.bookings-table th {
+  background-color: var(--dark-secondary);
+  color: var(--light-gray);
+  padding: 16px;
+  font-size: 14px;
+  text-align: left;
+}
+
+.bookings-table td {
+  padding: 14px;
+  border-bottom: 1px solid var(--light-gray);
+  font-size: 13px;
+}
+
+/* ===================== */
+/* STATUS BADGE */
+/* ===================== */
+
+.status-badge {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.status-confirmed {
+  background: var(--accent-strong);
+}
+
+.status-cancelled {
+  background: #ef4444;
+}
+
+/* ===================== */
+/* MOBILE CARD VIEW */
+/* ===================== */
+
+/* ===================== */
+/* MOBILE CARD VIEW FIX */
+/* ===================== */
+
+.booking-card {
+  background: var(--dark-secondary); /* dark background */
+  border-radius: 16px;
+  padding: 18px;
+  margin-bottom: 15px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+  color: #ffffff; /* force white text */
+}
+
+.booking-card h4 {
+  margin-bottom: 12px;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--accent-soft); /* light pink title */
+}
+
+.booking-card p {
+  margin: 6px 0;
+  font-size: 14px;
+  color: #ffffff; /* white text */
+}
+
+.booking-card strong {
+  color: var(--accent-strong); /* highlight labels */
+}
+
+
+/* ===================== */
+/* RESPONSIVE */
+/* ===================== */
+
+@media (max-width: 768px) {
+
+  .bookings-table-wrapper {
+    display: none;   /* hide table */
+  }
+
+  .bookings-cards {
+    display: block;  /* show cards */
+  }
+
+  .bookings-page {
+    padding: 15px;
+  }
+
+  .bookings-title {
+    font-size: 20px;
+  }
+}

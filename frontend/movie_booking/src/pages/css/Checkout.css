@@ -1,0 +1,185 @@
+/* PAGE */
+.checkout-page {
+  max-width: 620px;
+  margin: auto;
+  padding: 20px;
+  color: var(--light-gray);
+}
+
+/* TITLE */
+.page-title {
+  text-align: center;
+  font-size: 1.6rem;
+  margin-bottom: 24px;
+  font-weight: 700;
+}
+
+/* CARD */
+.checkout-card {
+  background: var(--dark-secondary);
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+}
+
+/* ROWS */
+.checkout-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 0;
+  font-size: 0.95rem;
+  border-bottom: 1px dashed rgba(214, 214, 214, 0.2);
+}
+
+.checkout-row span {
+  color: var(--accent-soft);
+}
+
+.checkout-row strong {
+  color: var(--light-gray);
+  max-width: 65%;
+  text-align: right;
+}
+
+/* TOTAL */
+.checkout-total {
+  display: flex;
+  justify-content: space-between;
+  padding: 18px 0;
+  margin-top: 8px;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--accent-strong);
+}
+
+/* PAY BUTTON */
+.pay-btn {
+  width: 100%;
+  padding: 14px;
+  margin-top: 14px;
+  border-radius: 28px;
+  border: none;
+  cursor: pointer;
+
+  background: var(--accent-strong);
+  color: var(--dark-primary);
+
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+
+  transition: all 0.25s ease;
+}
+
+.pay-btn:hover {
+  background: #ff7a63;
+  transform: translateY(-2px);
+}
+
+.pay-btn:active {
+  transform: scale(0.97);
+}
+
+/* MOBILE */
+@media (max-width: 600px) {
+  .checkout-card {
+    padding: 18px;
+  }
+
+  .page-title {
+    font-size: 1.4rem;
+  }
+
+  .checkout-total {
+    font-size: 1.05rem;
+  }
+}
+.checkout-card::before,
+.checkout-card::after {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background: var(--dark-primary);
+  border-radius: 50%;
+}
+
+.checkout-card::before {
+  left: -8px;
+  top: 50%;
+}
+
+.checkout-card::after {
+  right: -8px;
+  top: 50%;
+}
+/* 🎬 MOVIE HEADER */
+.checkout-header {
+  display: flex;
+  gap: 16px;
+  background: var(--dark-secondary);
+  padding: 14px;
+  border-radius: 14px;
+  margin-bottom: 20px;
+  align-items: center;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+}
+
+/* POSTER */
+.checkout-header img {
+  width: 90px;
+  height: 130px;
+  object-fit: cover;
+  border-radius: 10px;
+  flex-shrink: 0;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
+}
+
+/* DETAILS */
+.checkout-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: var(--light-gray);
+  font-weight: 600;
+}
+
+.checkout-header p {
+  margin: 6px 0 4px;
+  font-size: 0.9rem;
+  color: var(--accent-soft);
+  font-weight: 500;
+}
+
+.checkout-header span {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: 0.8rem;
+  color: var(--light-gray);
+  opacity: 0.8;
+}
+.checkout-card {
+  background: var(--dark-primary);
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+@media (max-width: 600px) {
+  .checkout-header {
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .checkout-header img {
+    width: 70px;
+    height: 105px;
+  }
+
+  .checkout-header h3 {
+    font-size: 1rem;
+  }
+
+  .checkout-header p {
+    font-size: 0.85rem;
+  }
+}

@@ -1,0 +1,208 @@
+/* ================================
+   🎭 THEATRE SELECTION PAGE
+================================ */
+
+.theatre-page {
+  padding: 20px 12px 60px;
+  color: var(--text-primary, #fff);
+}
+
+/* ================================
+   🎬 MOVIE HEADER
+================================ */
+
+.theatre-movie-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.08),
+    rgba(255, 255, 255, 0.02)
+  );
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 24px;
+  backdrop-filter: blur(10px);
+}
+
+.theatre-movie-header img {
+  width: 90px;
+  height: 130px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.theatre-movie-header h2 {
+  margin: 0 0 6px;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.theatre-movie-header .badge {
+  display: inline-block;
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  border-radius: 20px;
+  background: var(--accent, #ff4d6d);
+  color: #fff;
+}
+
+/* ================================
+   📌 SECTION TITLE
+================================ */
+
+.section-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 10px 0 18px;
+}
+
+/* ================================
+   🏢 THEATRE CARD
+================================ */
+
+.theatre-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 16px;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.theatre-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+/* ================================
+   🎥 THEATRE INFO
+================================ */
+
+.theatre-info h4 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.location {
+  font-size: 0.85rem;
+  opacity: 0.7;
+  margin-top: 4px;
+}
+
+/* ================================
+   ⏰ SHOWTIME BUTTONS
+================================ */
+
+.showtime-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.showtime-btn {
+  padding: 8px 14px;
+  font-size: 0.85rem;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.showtime-btn:hover {
+  background: var(--accent, #ff4d6d);
+  border-color: var(--accent, #ff4d6d);
+}
+
+.showtime-btn:active {
+  transform: scale(0.96);
+}
+
+/* ================================
+   🚫 EMPTY STATE
+================================ */
+
+.empty-state {
+  text-align: center;
+  margin-top: 80px;
+  font-size: 1rem;
+  opacity: 0.7;
+}
+
+/* ================================
+   📅 DATE SELECTOR
+================================ */
+
+.date-selector {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding: 10px 0 18px;
+  margin-bottom: 10px;
+}
+
+.date-selector::-webkit-scrollbar {
+  display: none;
+}
+
+.date-btn {
+  min-width: 64px;
+  padding: 10px 0;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: transparent;
+  color: #fff;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.date-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.date-btn.active {
+  background: var(--accent, #ff4d6d);
+  border-color: var(--accent, #ff4d6d);
+}
+
+.date-btn .day {
+  display: block;
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+.date-btn .date {
+  display: block;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+
+/* ================================
+   📱 RESPONSIVE
+================================ */
+
+@media (max-width: 480px) {
+  .theatre-movie-header {
+    padding: 12px;
+  }
+
+  .theatre-movie-header img {
+    width: 75px;
+    height: 110px;
+  }
+
+  .theatre-movie-header h2 {
+    font-size: 1.05rem;
+  }
+
+  .showtime-btn {
+    font-size: 0.8rem;
+    padding: 7px 12px;
+  }
+}

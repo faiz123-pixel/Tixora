@@ -1,0 +1,46 @@
+
+/* 🌌 GLOBAL APP BACKGROUND */
+body {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  background: #0f0f1a;
+  color: #eaeaea;
+}
+
+/* Background container */
+.app-background {
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+
+  background-image:
+    linear-gradient(
+      /* -45deg,
+      rgba(229, 9, 20, 0.25),
+      rgba(20, 20, 40, 0.7),
+      rgba(12, 12, 22, 0.9),
+      rgba(229, 9, 20, 0.25) */
+      -45deg,
+    var(--dark-primary),
+    var(--dark-secondary),
+    #111827,
+    var(--dark-secondary)
+    );
+
+  background-size: 400% 400%;
+  animation: gradientFlow 5s ease infinite;
+}
+
+/* Gradient animation */
+@keyframes gradientFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+

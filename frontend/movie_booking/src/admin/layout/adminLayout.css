@@ -1,0 +1,92 @@
+:root {
+  --dark-primary: #2C2B30;
+  --dark-secondary: #4F4F51;
+  --light-gray: #D6D6D6;
+  --accent-soft: #F2C4CE;
+}
+
+/* Layout */
+.admin-layout {
+  display: flex;
+  height: 100vh;
+  background-color: var(--light-gray);
+  font-family: Arial, sans-serif;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 240px;
+  background-color: var(--dark-primary);
+  color: var(--light-gray);
+  padding: 20px;
+}
+
+.logo {
+  margin-bottom: 30px;
+  color: var(--accent-soft);
+}
+
+/* Sidebar links */
+.sidebar a {
+  display: block;
+  color: var(--light-gray);
+  padding: 12px;
+  margin-bottom: 6px;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.sidebar a:hover {
+  background-color: var(--dark-secondary);
+}
+
+.sidebar a.active {
+  background-color: var(--accent-soft);
+  color: var(--dark-primary);
+}
+
+/* Right side */
+.admin-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Topbar */
+.topbar {
+  height: 60px;
+  background: #ffffff;
+  border-bottom: 1px solid var(--dark-secondary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  color: var(--dark-primary);
+}
+
+/* Logout button */
+.logout-btn {
+  background: var(--accent-soft);
+  color: var(--dark-primary);
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* Content */
+.admin-content {
+  padding: 20px;
+  overflow-y: auto;
+}
+
+/* Cards (Dashboard etc.) */
+.card {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 10px;
+  color: var(--dark-primary);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}

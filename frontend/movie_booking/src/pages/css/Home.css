@@ -1,0 +1,175 @@
+.home-page {
+  padding: 16px;
+  color: var(--light-gray);
+}
+.page-container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 10px 20px 40px;
+}
+
+
+/* 🔹 SEARCH + FILTER ROW */
+.search-filter-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+  flex-wrap: nowrap;
+}
+
+/* 🔍 Search box */
+.search-box {
+  position: relative;
+  flex: 1;
+  max-width: 400px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 8px 36px 8px 12px;
+  background: var(--dark-secondary);
+  border: none;
+  color: var(--light-gray);
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+.search-input:focus {
+  outline: none;
+}
+
+.search-icon-btn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--accent-strong);
+  cursor: pointer;
+}
+
+/* 🎯 Filters */
+.filter-buttons {
+  display: flex;
+  gap: 10px;
+  white-space: nowrap;
+}
+
+.filter-btn {
+  background: var(--dark-secondary);
+  border: none;
+  color: var(--light-gray);
+  padding: 6px 14px;
+  border-radius: 16px;
+  font-size: 0.85rem;
+}
+
+.filter-btn.active {
+  background: var(--accent-strong);
+  color: var(--dark-primary);
+}
+
+/* 🎞 Slider */
+.slider {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+}
+
+.slider-card {
+  min-width: 140px;
+  padding: 12px;
+  background: var(--dark-secondary);
+  border-radius: 8px;
+  text-align: center;
+}
+
+/* 🎬 Category section */
+.category-section {
+  margin-bottom: 40px;
+}
+
+.category-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--accent-strong);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.category-line {
+  flex: 1;
+  height: 2px;
+  background-color: var(--accent-strong);
+  border-radius: 1px;
+}
+
+/* 🎬 Movie row (horizontal scroll) */
+.movie-row {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  scrollbar-width: thin;
+}
+
+.movie-row::-webkit-scrollbar {
+  height: 6px;
+}
+
+.movie-row::-webkit-scrollbar-thumb {
+  background-color: var(--accent-strong);
+  border-radius: 3px;
+}
+
+/* 🎬 Movie card */
+.movie-card {
+  flex: 0 0 auto;
+  width: 180px;
+  background: var(--dark-secondary);
+  border-radius: 12px;
+  overflow: hidden;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.movie-card:hover {
+  transform: scale(1.05);
+}
+
+.movie-poster {
+  width: 100%;
+  height: 270px;
+  object-fit: cover;
+}
+
+.movie-title {
+  display: block;
+  padding: 6px 0;
+  font-weight: 600;
+  color: var(--light-gray);
+}
+
+/* 📱 Mobile */
+@media (max-width: 768px) {
+  .search-filter-row {
+    flex-wrap: wrap;
+  }
+
+  .search-box {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+
+  .filter-buttons {
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+}
