@@ -1,76 +1,42 @@
-/* =========================
-   DUMMY SHOWS DATA
-========================= */
-
-let dummyShows = [
+let shows = [
   {
     _id: "1",
-    movie: { name: "Avengers: Final War" },
-    theatre: { name: "PVR Cinemas" },
-    date: "2026-02-20",
-    time: "10:00 AM",
-    price: 150,
+    movie: { name: "Avengers: Endgame" },
+    theatre: "PVR Cinemas",
+    showTime: "10:00 AM",
+    price: 250,
   },
   {
     _id: "2",
-    movie: { name: "Pathaan 2" },
-    theatre: { name: "INOX" },
-    date: "2026-02-21",
-    time: "2:30 PM",
-    price: 180,
-  },
-  {
-    _id: "3",
-    movie: { name: "KGF Chapter 3" },
-    theatre: { name: "Cinepolis" },
-    date: "2026-02-22",
-    time: "6:00 PM",
-    price: 200,
+    movie: { name: "KGF Chapter 2" },
+    theatre: "INOX",
+    showTime: "1:30 PM",
+    price: 220,
   },
 ];
 
-/* =========================
-   GET ALL SHOWS
-========================= */
-export const getShows = async () => {
-  return dummyShows;
+export const getShows = () => {
+  return Promise.resolve([...shows]);
 };
 
-/* =========================
-   GET SHOW BY ID
-========================= */
-export const getShowById = async (id) => {
-  return dummyShows.find((show) => show._id === id);
+export const getShowById = (id) => {
+  return Promise.resolve(shows.find(s => s._id === id));
 };
 
-/* =========================
-   CREATE SHOW
-========================= */
-export const createShow = async (showData) => {
-  const newShow = {
-    _id: Date.now().toString(),
-    ...showData,
-  };
-
-  dummyShows.push(newShow);
-  return newShow;
+export const createShow = (data) => {
+  const newShow = { ...data, _id: Date.now().toString() };
+  shows.push(newShow);
+  return Promise.resolve(newShow);
 };
 
-/* =========================
-   UPDATE SHOW
-========================= */
-export const updateShow = async (id, updatedData) => {
-  dummyShows = dummyShows.map((show) =>
-    show._id === id ? { ...show, ...updatedData } : show
+export const updateShow = (id, updatedData) => {
+  shows = shows.map(s =>
+    s._id === id ? { ...s, ...updatedData } : s
   );
-
-  return dummyShows.find((show) => show._id === id);
+  return Promise.resolve({ success: true });
 };
 
-/* =========================
-   DELETE SHOW
-========================= */
-export const deleteShow = async (id) => {
-  dummyShows = dummyShows.filter((show) => show._id !== id);
-  return { message: "Show deleted successfully" };
+export const deleteShow = (id) => {
+  shows = shows.filter(s => s._id !== id);
+  return Promise.resolve({ success: true });
 };

@@ -1,10 +1,20 @@
 import { useEffect, useState } from "react";
-import { getMovies, deleteMovie } from "../services/movieService";
-import { useNavigate } from "react-router-dom";
+import {
+  getMovies,
+  deleteMovie,
+  createMovie,
+  updateMovie,
+} from "../services/movieService";
+import "./css/Movies.css";
 
 function Movies() {
   const [movies, setMovies] = useState([]);
-  const navigate = useNavigate();
+  const [form, setForm] = useState({
+    name: "",
+    language: "",
+    releaseDate: "",
+  });
+  const [editId, setEditId] = useState(null);
 
   useEffect(() => {
     loadMovies();
@@ -15,6 +25,29 @@ function Movies() {
     setMovies(data);
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (editId) {
+      await updateMovie(editId, form);
+      setEditId(null);
+    } else {
+      await createMovie(form);
+    }
+
+    setForm({ name: "", language: "", releaseDate: "" });
+    loadMovies();
+  };
+
+  const handleEdit = (movie) => {
+    setEditId(movie._id);
+    setForm({
+      name: movie.name,
+      language: movie.language,
+      releaseDate: movie.releaseDate || "",
+    });
+  };
+
   const handleDelete = async (id) => {
     if (window.confirm("Delete this movie?")) {
       await deleteMovie(id);
@@ -22,166 +55,89 @@ function Movies() {
     }
   };
 
-  const styles = {
-    page: {
-      backgroundColor: "var(--dark-primary)",
-      padding: "30px",
-      minHeight: "100vh",
-    },
-
-    header: {
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center",
-      marginBottom: "25px",
-    },
-
-    title: {
-      fontSize: "26px",
-      fontWeight: "700",
-      color: "var(--accent-strong)",
-    },
-
-    addBtn: {
-      backgroundColor: "var(--accent-soft)",
-      border: "none",
-      padding: "10px 18px",
-      borderRadius: "25px",
-      fontWeight: "600",
-      cursor: "pointer",
-      color: "var(--dark-primary)",
-      transition: "0.3s",
-    },
-
-    tableWrapper: {
-      backgroundColor: "#ffffff",
-      borderRadius: "18px",
-      boxShadow: "0 10px 30px rgba(0,0,0,0.15)",
-      overflow: "hidden",
-    },
-
-    table: {
-      width: "100%",
-      borderCollapse: "collapse",
-    },
-
-    th: {
-      backgroundColor: "var(--dark-secondary)",
-      color: "var(--light-gray)",
-      textAlign: "left",
-      padding: "16px",
-      fontSize: "15px",
-    },
-
-    td: {
-      padding: "16px",
-      borderBottom: "1px solid var(--light-gray)",
-      fontSize: "14px",
-      color: "var(--dark-primary)",
-    },
-
-    actions: {
-      display: "flex",
-      gap: "10px",
-    },
-
-    editBtn: {
-      backgroundColor: "var(--accent-strong)",
-      color: "#ffffff",
-      border: "none",
-      padding: "7px 14px",
-      borderRadius: "18px",
-      cursor: "pointer",
-      fontSize: "13px",
-      transition: "0.3s",
-    },
-
-    deleteBtn: {
-      backgroundColor: "#ef4444",
-      color: "#ffffff",
-      border: "none",
-      padding: "7px 14px",
-      borderRadius: "18px",
-      cursor: "pointer",
-      fontSize: "13px",
-      transition: "0.3s",
-    },
-
-    empty: {
-      padding: "30px",
-      textAlign: "center",
-      color: "var(--dark-secondary)",
-      fontSize: "15px",
-    },
-  };
-
   return (
-    <div style={styles.page}>
-      {/* Header */}
-      <div style={styles.header}>
-        <h2 style={styles.title}>Movies Management</h2>
-        <button
-          style={styles.addBtn}
-          onClick={() => navigate("/admin/movies/add")}
-        >
-          + Add Movie
+    <div className="movies-container">
+      <h2>Movies Management</h2>
+
+      {/* Add / Edit Form */}
+      <form className="movie-form" onSubmit={handleSubmit}>
+        <input
+          type="text"
+          placeholder="Movie Name"
+          value={form.name}
+          onChange={(e) => setForm({ ...form, name: e.target.value })}
+          required
+        />
+
+        <input
+          type="text"
+          placeholder="Language"
+          value={form.language}
+          onChange={(e) => setForm({ ...form, language: e.target.value })}
+          required
+        />
+
+        <input
+          type="date"
+          value={form.releaseDate}
+          onChange={(e) =>
+            setForm({ ...form, releaseDate: e.target.value })
+          }
+        />
+
+        <button type="submit">
+          {editId ? "Update Movie" : "Add Movie"}
         </button>
-      </div>
+      </form>
 
-      {/* Table */}
-      <div style={styles.tableWrapper}>
-        <table style={styles.table}>
-          <thead>
+      {/* Movies Table */}
+      <table className="movies-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Language</th>
+            <th>Release Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {movies.length === 0 ? (
             <tr>
-              <th style={styles.th}>Movie Name</th>
-              <th style={styles.th}>Language</th>
-              <th style={styles.th}>Release Date</th>
-              <th style={styles.th}>Actions</th>
+              <td colSpan="4" className="empty-row">
+                No movies available
+              </td>
             </tr>
-          </thead>
+          ) : (
+            movies.map((movie) => (
+              <tr key={movie._id}>
+                <td>{movie.name}</td>
+                <td>{movie.language}</td>
+                <td>
+                  {movie.releaseDate
+                    ? new Date(movie.releaseDate).toLocaleDateString()
+                    : "N/A"}
+                </td>
+                <td>
+                  <button
+                    className="edit-btn"
+                    onClick={() => handleEdit(movie)}
+                  >
+                    Edit
+                  </button>
 
-          <tbody>
-            {movies.length === 0 ? (
-              <tr>
-                <td colSpan="4" style={styles.empty}>
-                  No movies available
+                  <button
+                    className="delete-btn"
+                    onClick={() => handleDelete(movie._id)}
+                  >
+                    Delete
+                  </button>
                 </td>
               </tr>
-            ) : (
-              movies.map((movie) => (
-                <tr key={movie._id}>
-                  <td style={styles.td}>{movie.name}</td>
-                  <td style={styles.td}>{movie.language}</td>
-                  <td style={styles.td}>
-                    {movie.releaseDate
-                      ? new Date(movie.releaseDate).toLocaleDateString()
-                      : "N/A"}
-                  </td>
-                  <td style={styles.td}>
-                    <div style={styles.actions}>
-                      <button
-                        style={styles.editBtn}
-                        onClick={() =>
-                          navigate(`/admin/movies/edit/${movie._id}`)
-                        }
-                      >
-                        Edit
-                      </button>
-
-                      <button
-                        style={styles.deleteBtn}
-                        onClick={() => handleDelete(movie._id)}
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+            ))
+          )}
+        </tbody>
+      </table>
     </div>
   );
 }

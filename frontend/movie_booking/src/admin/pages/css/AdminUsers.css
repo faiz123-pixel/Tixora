@@ -1,0 +1,104 @@
+.users-container {
+  padding: 30px;
+  background: var(--dark-primary);
+  min-height: 100vh;
+  color: white;
+}
+
+.users-container h2 {
+  color: var(--accent-strong);
+  margin-bottom: 20px;
+}
+
+/* Form */
+
+.user-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.user-form input {
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  background: var(--light-gray);
+  color: var(--dark-primary);
+}
+
+.user-form button {
+  background: var(--accent-strong);
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.user-form button:hover {
+  background: var(--accent-soft);
+  color: var(--dark-primary);
+}
+
+/* Table */
+
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--dark-secondary);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.users-table th,
+.users-table td {
+  padding: 12px;
+  text-align: center;
+}
+
+.users-table th {
+  background: var(--accent-strong);
+  color: white;
+}
+
+.users-table td {
+  color: var(--light-gray);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.users-table button {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.delete-btn {
+  background: crimson;
+  color: white;
+}
+
+.role-badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.super-admin {
+  background: var(--accent-soft);
+  color: var(--dark-primary);
+}
+
+.normal-user {
+  background: var(--light-gray);
+  color: var(--dark-primary);
+}
+
+.empty-row {
+  padding: 20px;
+  text-align: center;
+  color: var(--light-gray);
+}

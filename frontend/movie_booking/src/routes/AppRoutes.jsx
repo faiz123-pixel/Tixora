@@ -15,14 +15,15 @@ import Theatres from "../pages/Theatres";
 
 import Dashboard from "../admin/pages/Dashboard";
 import Movies from "../admin/pages/Movies";
-import EditMovie from "../admin/pages/EditMovie";
-import AddTheatre from "../admin/pages/AddTheatre";
+// import EditMovie from "../admin/pages/EditMovie";
+// import AddTheatre from "../admin/pages/AddTheatre";
 import Bookings from "../admin/pages/Bookings";
 import AdminTheatres from "../admin/pages/AdminTheatres";
 import AdminLayout from "../admin/layout/AdminLayout";
-import EditTheatre from "../admin/pages/EditTheatre";
-import AddMovie from "../admin/pages/AddMovie";
+// import EditTheatre from "../admin/pages/EditTheatre";
+// import AddMovie from "../admin/pages/AddMovie";
 import AdminShows from "../admin/pages/AdminShows";
+import AdminUsers from "../admin/pages/AdminUsers";
 
 
 const AppRoutes=createBrowserRouter(
@@ -50,19 +51,23 @@ const AppRoutes=createBrowserRouter(
 
       /* Movies */
       { path: "movies", element: <Movies /> },
-      { path: "movies/edit/:id", element: <EditMovie /> },
-      { path: "movies/add", element: <AddMovie /> },
+      // { path: "movies/edit/:id", element: <EditMovie /> },
+      // { path: "movies/add", element: <AddMovie /> },
 
       /* Theatres */
       { path: "theatres", element: <AdminTheatres /> },
-      { path: "theatres/add", element: <AddTheatre /> },
-      { path: "theatres/edit/:id", element: <EditTheatre /> },
+      // { path: "theatres/add", element: <AddTheatre /> },
+      // { path: "theatres/edit/:id", element: <EditTheatre /> },
 
       // Shows
       { path: "shows", element:<AdminShows/>},
 
+      // Admin Users
+      { path: "users", element:<AdminUsers/>},
+
       /* Bookings */
       { path: "bookings", element: <Bookings /> },
+
     ],
   },
     ]

@@ -1,0 +1,93 @@
+.movies-container {
+  padding: 30px;
+  background: var(--dark-primary);
+  min-height: 100vh;
+  color: white;
+}
+
+.movies-container h2 {
+  color: var(--accent-strong);
+  margin-bottom: 20px;
+}
+
+/* Form */
+
+.movie-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.movie-form input {
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  background: var(--light-gray);
+  color: var(--dark-primary);
+}
+
+.movie-form button {
+  background: var(--accent-strong);
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.movie-form button:hover {
+  background: var(--accent-soft);
+  color: var(--dark-primary);
+}
+
+/* Table */
+
+.movies-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--dark-secondary);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.movies-table th,
+.movies-table td {
+  padding: 12px;
+  text-align: center;
+}
+
+.movies-table th {
+  background: var(--accent-strong);
+  color: white;
+}
+
+.movies-table td {
+  color: var(--light-gray);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.movies-table button {
+  margin: 0 5px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.edit-btn {
+  background: var(--accent-soft);
+  color: var(--dark-primary);
+}
+
+.delete-btn {
+  background: crimson;
+  color: white;
+}
+
+.empty-row {
+  padding: 20px;
+  text-align: center;
+  color: var(--light-gray);
+}

@@ -1,0 +1,90 @@
+.dashboard-container {
+  padding: 30px;
+  background: var(--dark-primary);
+  min-height: 100vh;
+  color: white;
+}
+
+.dashboard-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--accent-strong);
+  margin-bottom: 5px;
+}
+
+.dashboard-subtitle {
+  font-size: 14px;
+  color: var(--light-gray);
+  margin-bottom: 30px;
+}
+
+/* Main Stats Grid */
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+/* Cards */
+
+.dashboard-card {
+  background: var(--dark-secondary);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  transition: 0.3s;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-5px);
+}
+
+.dashboard-icon {
+  font-size: 26px;
+}
+
+.dashboard-label {
+  font-size: 14px;
+  color: var(--light-gray);
+}
+
+.dashboard-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--accent-strong);
+}
+
+/* Quick Insights */
+
+.quick-box {
+  margin-top: 40px;
+  background: var(--dark-secondary);
+  border-radius: 18px;
+  padding: 25px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.quick-item {
+  background: var(--dark-primary);
+  padding: 18px;
+  border-radius: 14px;
+  text-align: center;
+}
+
+.quick-item span {
+  font-size: 14px;
+  color: var(--light-gray);
+}
+
+.quick-value {
+  margin-top: 8px;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--accent-soft);
+}

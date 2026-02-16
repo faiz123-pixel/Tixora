@@ -1,13 +1,7 @@
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import logo from "../../assets/logo.png";
 
 function Sidebar({ isMobile, closeSidebar }) {
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    localStorage.removeItem("adminToken");
-    navigate("/admin/login");
-  };
 
   const menuItems = [
     { name: "Dashboard", path: "dashboard", icon: "📊" },
@@ -15,8 +9,7 @@ function Sidebar({ isMobile, closeSidebar }) {
     { name: "Theatres", path: "theatres", icon: "🏢" },
     { name: "Shows", path: "shows", icon: "🎥" },
     { name: "Bookings", path: "bookings", icon: "🎟️" },
-    { name: "Admins", path: "admins", icon: "👑" },
-    { name: "Reports", path: "reports", icon: "📈" },
+    { name: "Users", path: "users", icon: "👑" },
   ];
 
   const styles = {

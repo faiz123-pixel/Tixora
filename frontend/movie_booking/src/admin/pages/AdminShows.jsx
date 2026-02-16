@@ -1,173 +1,134 @@
 import { useEffect, useState } from "react";
-import { getShows, deleteShow } from "../services/showsService";
-import { useNavigate } from "react-router-dom";
+import {
+  getShows,
+  createShow,
+  updateShow,
+  deleteShow
+} from "../services/showsService";
+import "./css/AdminShows.css";
 
 function AdminShows() {
   const [shows, setShows] = useState([]);
-  const navigate = useNavigate();
+  const [form, setForm] = useState({
+    movieName: "",
+    theatre: "",
+    showTime: "",
+    price: ""
+  });
+  const [editId, setEditId] = useState(null);
 
   useEffect(() => {
     loadShows();
   }, []);
 
-  const loadShows = async () => {
-    const data = await getShows();
-    setShows(data);
+  const loadShows = () => {
+    getShows().then(setShows);
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm("Delete this show?")) {
-      await deleteShow(id);
-      loadShows();
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const showData = {
+      movie: { name: form.movieName },
+      theatre: form.theatre,
+      showTime: form.showTime,
+      price: Number(form.price)
+    };
+
+    if (editId) {
+      updateShow(editId, showData).then(() => {
+        setEditId(null);
+        loadShows();
+      });
+    } else {
+      createShow(showData).then(loadShows);
     }
+
+    setForm({ movieName: "", theatre: "", showTime: "", price: "" });
   };
 
-  const styles = {
-    page: {
-      backgroundColor: "var(--dark-primary)",
-      padding: "30px",
-      minHeight: "100vh",
-    },
+  const handleEdit = (show) => {
+    setEditId(show._id);
+    setForm({
+      movieName: show.movie.name,
+      theatre: show.theatre,
+      showTime: show.showTime,
+      price: show.price
+    });
+  };
 
-    header: {
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center",
-      marginBottom: "25px",
-    },
-
-    title: {
-      fontSize: "26px",
-      fontWeight: "700",
-      color: "var(--accent-strong)",
-    },
-
-    addBtn: {
-      backgroundColor: "var(--accent-soft)",
-      border: "none",
-      padding: "10px 18px",
-      borderRadius: "25px",
-      fontWeight: "600",
-      cursor: "pointer",
-      color: "var(--dark-primary)",
-    },
-
-    tableWrapper: {
-      backgroundColor: "#ffffff",
-      borderRadius: "18px",
-      boxShadow: "0 10px 30px rgba(0,0,0,0.15)",
-      overflow: "hidden",
-    },
-
-    table: {
-      width: "100%",
-      borderCollapse: "collapse",
-    },
-
-    th: {
-      backgroundColor: "var(--dark-secondary)",
-      color: "var(--light-gray)",
-      textAlign: "left",
-      padding: "16px",
-      fontSize: "15px",
-    },
-
-    td: {
-      padding: "16px",
-      borderBottom: "1px solid var(--light-gray)",
-      fontSize: "14px",
-      color: "var(--dark-primary)",
-    },
-
-    actions: {
-      display: "flex",
-      gap: "10px",
-    },
-
-    editBtn: {
-      backgroundColor: "var(--accent-strong)",
-      color: "#ffffff",
-      border: "none",
-      padding: "7px 14px",
-      borderRadius: "18px",
-      cursor: "pointer",
-      fontSize: "13px",
-    },
-
-    deleteBtn: {
-      backgroundColor: "#ef4444",
-      color: "#ffffff",
-      border: "none",
-      padding: "7px 14px",
-      borderRadius: "18px",
-      cursor: "pointer",
-      fontSize: "13px",
-    },
-
-    empty: {
-      padding: "30px",
-      textAlign: "center",
-      color: "var(--dark-secondary)",
-      fontSize: "15px",
-    },
+  const handleDelete = (id) => {
+    deleteShow(id).then(loadShows);
   };
 
   return (
-    <div style={styles.page}>
-      {/* Header */}
-      <div style={styles.header}>
-        <h2 style={styles.title}>Shows Management</h2>
-      </div>
+    <div className="shows-container">
+      <h2>Shows Management</h2>
 
-      {/* Table */}
-      <div style={styles.tableWrapper}>
-        <table style={styles.table}>
-          <thead>
-            <tr>
-              <th style={styles.th}>Movie</th>
-              <th style={styles.th}>Theatre</th>
-              <th style={styles.th}>Date</th>
-              <th style={styles.th}>Time</th>
-              <th style={styles.th}>Price</th>
-              <th style={styles.th}>Actions</th>
+      {/* Add / Edit Form */}
+      <form onSubmit={handleSubmit} className="show-form">
+        <input
+          type="text"
+          placeholder="Movie Name"
+          value={form.movieName}
+          onChange={(e) => setForm({ ...form, movieName: e.target.value })}
+          required
+        />
+        <input
+          type="text"
+          placeholder="Theatre"
+          value={form.theatre}
+          onChange={(e) => setForm({ ...form, theatre: e.target.value })}
+          required
+        />
+        <input
+          type="text"
+          placeholder="Show Time"
+          value={form.showTime}
+          onChange={(e) => setForm({ ...form, showTime: e.target.value })}
+          required
+        />
+        <input
+          type="number"
+          placeholder="Price"
+          value={form.price}
+          onChange={(e) => setForm({ ...form, price: e.target.value })}
+          required
+        />
+
+        <button type="submit">
+          {editId ? "Update Show" : "Add Show"}
+        </button>
+      </form>
+
+      {/* Shows Table */}
+      <table className="shows-table">
+        <thead>
+          <tr>
+            <th>Movie</th>
+            <th>Theatre</th>
+            <th>Time</th>
+            <th>Price</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {shows.map(show => (
+            <tr key={show._id}>
+              <td>{show.movie.name}</td>
+              <td>{show.theatre}</td>
+              <td>{show.showTime}</td>
+              <td>₹{show.price}</td>
+              <td>
+                <button onClick={() => handleEdit(show)}>Edit</button>
+                <button onClick={() => handleDelete(show._id)}>
+                  Delete
+                </button>
+              </td>
             </tr>
-          </thead>
-
-          <tbody>
-            {shows.length === 0 ? (
-              <tr>
-                <td colSpan="6" style={styles.empty}>
-                  No shows available
-                </td>
-              </tr>
-            ) : (
-              shows.map((show) => (
-                <tr key={show._id}>
-                  <td style={styles.td}>{show.movie?.name}</td>
-                  <td style={styles.td}>{show.theatre?.name}</td>
-                  <td style={styles.td}>
-                    {new Date(show.date).toLocaleDateString()}
-                  </td>
-                  <td style={styles.td}>{show.time}</td>
-                  <td style={styles.td}>₹ {show.price}</td>
-                  <td style={styles.td}>
-                    <div style={styles.actions}>
-                      
-
-                      <button
-                        style={styles.deleteBtn}
-                        onClick={() => handleDelete(show._id)}
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }

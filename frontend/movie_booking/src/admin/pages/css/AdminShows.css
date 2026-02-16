@@ -1,0 +1,74 @@
+.shows-container {
+  padding: 30px;
+  background: var(--dark-primary);
+  min-height: 100vh;
+  color: white;
+}
+
+.shows-container h2 {
+  color: var(--accent-strong);
+  margin-bottom: 20px;
+}
+
+.show-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.show-form input {
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  background: var(--light-gray);
+}
+
+.show-form button {
+  background: var(--accent-strong);
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+}
+
+.show-form button:hover {
+  background: var(--accent-soft);
+}
+
+.shows-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--dark-secondary);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.shows-table th,
+.shows-table td {
+  padding: 12px;
+  text-align: center;
+}
+
+.shows-table th {
+  background: var(--accent-strong);
+  color: white;
+}
+
+.shows-table button {
+  margin: 0 5px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.shows-table button:first-child {
+  background: var(--accent-soft);
+}
+
+.shows-table button:last-child {
+  background: crimson;
+  color: white;
+}
