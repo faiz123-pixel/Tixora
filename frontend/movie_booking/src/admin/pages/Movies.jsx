@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import {
   getMovies,
   deleteMovie,
@@ -9,12 +10,15 @@ import "./css/Movies.css";
 
 function Movies() {
   const [movies, setMovies] = useState([]);
-  const [form, setForm] = useState({
-    name: "",
-    language: "",
-    releaseDate: "",
-  });
   const [editId, setEditId] = useState(null);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    formState: { errors },
+  } = useForm();
 
   useEffect(() => {
     loadMovies();
@@ -25,27 +29,31 @@ function Movies() {
     setMovies(data);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
+  const onSubmit = async (data) => {
     if (editId) {
-      await updateMovie(editId, form);
+      await updateMovie(editId, data);
       setEditId(null);
     } else {
-      await createMovie(form);
+      await createMovie(data);
     }
 
-    setForm({ name: "", language: "", releaseDate: "" });
+    reset();
     loadMovies();
   };
 
   const handleEdit = (movie) => {
     setEditId(movie._id);
-    setForm({
-      name: movie.name,
-      language: movie.language,
-      releaseDate: movie.releaseDate || "",
-    });
+
+    setValue("title", movie.title);
+    setValue("description", movie.description);
+    setValue("duration", movie.duration);
+    setValue("language", movie.language);
+    setValue("genre", movie.genre);
+    setValue(
+      "releaseDate",
+      movie.releaseDate ? movie.releaseDate.substring(0, 10) : "",
+    );
+    setValue("posterUrl", movie.posterUrl);
   };
 
   const handleDelete = async (id) => {
@@ -60,42 +68,87 @@ function Movies() {
       <h2>Movies Management</h2>
 
       {/* Add / Edit Form */}
-      <form className="movie-form" onSubmit={handleSubmit}>
+      <form className="movie-form" onSubmit={handleSubmit(onSubmit)}>
         <input
           type="text"
-          placeholder="Movie Name"
-          value={form.name}
-          onChange={(e) => setForm({ ...form, name: e.target.value })}
-          required
+          placeholder="Title"
+          {...register("title", { required: "Title is required" })}
         />
+        {errors.title && <p className="error">{errors.title.message}</p>}
+
+        <textarea
+          placeholder="Description"
+          {...register("description", { required: "Description is required" })}
+        />
+        {errors.description && (
+          <p className="error">{errors.description.message}</p>
+        )}
+
+        <input
+          type="number"
+          placeholder="Duration (minutes)"
+          {...register("duration", {
+            required: "Duration is required",
+            min: { value: 1, message: "Must be greater than 0" },
+          })}
+        />
+        {errors.duration && <p className="error">{errors.duration.message}</p>}
 
         <input
           type="text"
           placeholder="Language"
-          value={form.language}
-          onChange={(e) => setForm({ ...form, language: e.target.value })}
-          required
+          {...register("language", { required: "Language is required" })}
         />
+        {errors.language && <p className="error">{errors.language.message}</p>}
+
+        <select {...register("genre", { required: "Genre is required" })}>
+          <option value="">Select Genre</option>
+          <option value="Action">Action</option>
+          <option value="Comedy">Comedy</option>
+          <option value="Drama">Drama</option>
+          <option value="Romance">Romance</option>
+          <option value="Horror">Horror</option>
+          <option value="Thriller">Thriller</option>
+          <option value="Sci-Fi">Sci-Fi</option>
+          <option value="Adventure">Adventure</option>
+          <option value="Animation">Animation</option>
+          <option value="Fantasy">Fantasy</option>
+        </select>
+
+        {errors.genre && <p className="error">{errors.genre.message}</p>}
 
         <input
           type="date"
-          value={form.releaseDate}
-          onChange={(e) =>
-            setForm({ ...form, releaseDate: e.target.value })
-          }
+          {...register("releaseDate", {
+            required: "Release date is required",
+          })}
         />
+        {errors.releaseDate && (
+          <p className="error">{errors.releaseDate.message}</p>
+        )}
 
-        <button type="submit">
-          {editId ? "Update Movie" : "Add Movie"}
-        </button>
+        <input
+          type="text"
+          placeholder="Poster URL"
+          {...register("posterUrl", {
+            required: "Poster URL is required",
+          })}
+        />
+        {errors.posterUrl && (
+          <p className="error">{errors.posterUrl.message}</p>
+        )}
+
+        <button type="submit">{editId ? "Update Movie" : "Add Movie"}</button>
       </form>
 
       {/* Movies Table */}
       <table className="movies-table">
         <thead>
           <tr>
-            <th>Name</th>
+            <th>Title</th>
             <th>Language</th>
+            <th>Genre</th>
+            <th>Duration</th>
             <th>Release Date</th>
             <th>Actions</th>
           </tr>
@@ -104,20 +157,18 @@ function Movies() {
         <tbody>
           {movies.length === 0 ? (
             <tr>
-              <td colSpan="4" className="empty-row">
+              <td colSpan="6" className="empty-row">
                 No movies available
               </td>
             </tr>
           ) : (
             movies.map((movie) => (
               <tr key={movie._id}>
-                <td>{movie.name}</td>
+                <td>{movie.title}</td>
                 <td>{movie.language}</td>
-                <td>
-                  {movie.releaseDate
-                    ? new Date(movie.releaseDate).toLocaleDateString()
-                    : "N/A"}
-                </td>
+                <td>{movie.genre}</td>
+                <td>{movie.duration} mins</td>
+                <td>{new Date(movie.releaseDate).toLocaleDateString()}</td>
                 <td>
                   <button
                     className="edit-btn"

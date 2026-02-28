@@ -5,7 +5,6 @@ import "./css/Login.css";
 
 function Login() {
   const navigate = useNavigate();
-
   const [captcha, setCaptcha] = useState("");
 
   const {
@@ -40,7 +39,7 @@ function Login() {
     }
 
     clearErrors();
-    navigate("/admin"); // redirect to home
+    navigate("/admin"); // redirect after login
   };
 
   return (
@@ -63,6 +62,22 @@ function Login() {
         />
         {errors.mobile && (
           <p className="error">{errors.mobile.message}</p>
+        )}
+
+        {/* 🔑 Password */}
+        <input
+          type="password"
+          placeholder="Password"
+          {...register("password", {
+            required: "Password is required",
+            minLength: {
+              value: 6,
+              message: "Minimum 6 characters required",
+            },
+          })}
+        />
+        {errors.password && (
+          <p className="error">{errors.password.message}</p>
         )}
 
         {/* 🔢 Captcha */}

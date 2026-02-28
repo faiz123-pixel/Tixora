@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import {
   getUsers,
   deleteUser,
@@ -8,9 +9,16 @@ import "./css/AdminUsers.css";
 
 function AdminUsers() {
   const [users, setUsers] = useState([]);
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      role: "ADMIN",
+    },
   });
 
   useEffect(() => {
@@ -22,10 +30,9 @@ function AdminUsers() {
     setUsers(data);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    await createSuperUser(form);
-    setForm({ name: "", email: "" });
+  const onSubmit = async (data) => {
+    await createSuperUser(data);
+    reset({ role: "ADMIN" });
     loadUsers();
   };
 
@@ -40,25 +47,58 @@ function AdminUsers() {
     <div className="users-container">
       <h2>Users Management</h2>
 
-      {/* Create Super Admin Form */}
-      <form className="user-form" onSubmit={handleSubmit}>
+      {/* Create User Form */}
+      <form className="user-form" onSubmit={handleSubmit(onSubmit)}>
+        
+        {/* Name */}
         <input
           type="text"
           placeholder="Name"
-          value={form.name}
-          onChange={(e) => setForm({ ...form, name: e.target.value })}
-          required
+          {...register("name", { required: "Name is required" })}
         />
+        {errors.name && (
+          <p className="error">{errors.name.message}</p>
+        )}
 
+        {/* Mobile Number */}
         <input
-          type="email"
-          placeholder="Email"
-          value={form.email}
-          onChange={(e) => setForm({ ...form, email: e.target.value })}
-          required
+          type="text"
+          placeholder="Mobile Number"
+          {...register("mobileNo", {
+            required: "Mobile number is required",
+            pattern: {
+              value: /^[0-9]{10}$/,
+              message: "Enter valid 10-digit mobile number",
+            },
+          })}
         />
+        {errors.mobileNo && (
+          <p className="error">{errors.mobileNo.message}</p>
+        )}
 
-        <button type="submit">Create Super Admin</button>
+        {/* Password */}
+        <input
+          type="password"
+          placeholder="Password"
+          {...register("password", {
+            required: "Password is required",
+            minLength: {
+              value: 6,
+              message: "Minimum 6 characters required",
+            },
+          })}
+        />
+        {errors.password && (
+          <p className="error">{errors.password.message}</p>
+        )}
+
+        {/* Role Dropdown */}
+        <select {...register("role", { required: true })}>
+          <option value="ADMIN">ADMIN</option>
+          <option value="SUPER_ADMIN">SUPER ADMIN</option>
+        </select>
+
+        <button type="submit">Create User</button>
       </form>
 
       {/* Users Table */}
@@ -66,7 +106,7 @@ function AdminUsers() {
         <thead>
           <tr>
             <th>Name</th>
-            <th>Email</th>
+            <th>Mobile No</th>
             <th>Role</th>
             <th>Actions</th>
           </tr>
@@ -83,13 +123,13 @@ function AdminUsers() {
             users.map((user) => (
               <tr key={user._id}>
                 <td>{user.name}</td>
-                <td>{user.email}</td>
+                <td>{user.mobileNo}</td>
                 <td>
                   <span
                     className={`role-badge ${
                       user.role === "SUPER_ADMIN"
                         ? "super-admin"
-                        : "normal-user"
+                        : "admin-user"
                     }`}
                   >
                     {user.role}

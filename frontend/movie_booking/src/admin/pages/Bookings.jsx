@@ -6,36 +6,58 @@ function Bookings() {
   const [bookings, setBookings] = useState([]);
 
   useEffect(() => {
-    getBookings().then(setBookings);
+    loadBookings();
   }, []);
+
+  const loadBookings = () => {
+    getBookings().then(setBookings);
+  };
 
   return (
     <div className="bookings-page">
       <h2 className="bookings-title">Bookings Management</h2>
 
-
-      {/* ===== Mobile Cards ===== */}
       <div className="bookings-cards">
-        {bookings.map((b) => (
-          <div key={b._id} className="booking-card">
-            <h4>{b.movie?.name}</h4>
-            <p><strong>User:</strong> {b.user?.email}</p>
-            <p><strong>Seats:</strong> {b.seats?.join(", ")}</p>
-            <p><strong>Amount:</strong> ₹ {b.amount}</p>
-            <p>
-              <strong>Status:</strong>{" "}
-              <span
-                className={`status-badge ${
-                  b.status === "Cancelled"
-                    ? "status-cancelled"
-                    : "status-confirmed"
-                }`}
-              >
-                {b.status || "Confirmed"}
-              </span>
-            </p>
-          </div>
-        ))}
+        {bookings.length === 0 ? (
+          <p className="empty-row">No bookings available</p>
+        ) : (
+          bookings.map((b) => (
+            <div key={b._id} className="booking-card">
+              
+              <h4>Show: {b.show?.movie?.name || b.show}</h4>
+
+              <p>
+                <strong>User:</strong>{" "}
+                {b.user?.name || b.user?.email || b.user}
+              </p>
+
+              <p>
+                <strong>Total Amount:</strong> ₹ {b.totalAmount}
+              </p>
+
+              <p>
+                <strong>Date & Time:</strong>{" "}
+                {b.dateTime
+                  ? new Date(b.dateTime).toLocaleString()
+                  : "N/A"}
+              </p>
+
+              <p>
+                <strong>Status:</strong>{" "}
+                <span
+                  className={`status-badge ${
+                    b.status === "Cancelled"
+                      ? "status-cancelled"
+                      : "status-confirmed"
+                  }`}
+                >
+                  {b.status || "Confirmed"}
+                </span>
+              </p>
+
+            </div>
+          ))
+        )}
       </div>
     </div>
   );

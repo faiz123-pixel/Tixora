@@ -10,21 +10,35 @@
   margin-bottom: 20px;
 }
 
+/* ========================= */
 /* Form */
+/* ========================= */
 
 .movie-form {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 15px;
   margin-bottom: 30px;
 }
-
-.movie-form input {
+.movie-form ::placeholder,
+.movie-form input,
+.movie-form select,
+.movie-form textarea {
   padding: 10px;
   border-radius: 8px;
   border: none;
   background: var(--light-gray);
   color: var(--dark-primary);
+  font-size: 14px;
+}
+
+.movie-form textarea {
+  resize: none;
+  min-height: 80px;
+}
+
+.movie-form select {
+  cursor: pointer;
 }
 
 .movie-form button {
@@ -35,6 +49,7 @@
   color: white;
   cursor: pointer;
   font-weight: 600;
+  transition: 0.3s ease;
 }
 
 .movie-form button:hover {
@@ -42,7 +57,16 @@
   color: var(--dark-primary);
 }
 
+/* Error message */
+.error {
+  color: crimson;
+  font-size: 13px;
+  margin-top: -8px;
+}
+
+/* ========================= */
 /* Table */
+/* ========================= */
 
 .movies-table {
   width: 100%;
@@ -68,12 +92,17 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+.movies-table tr:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
 .movies-table button {
   margin: 0 5px;
   padding: 6px 12px;
   border-radius: 6px;
   border: none;
   cursor: pointer;
+  transition: 0.3s ease;
 }
 
 .edit-btn {
@@ -81,9 +110,17 @@
   color: var(--dark-primary);
 }
 
+.edit-btn:hover {
+  opacity: 0.8;
+}
+
 .delete-btn {
   background: crimson;
   color: white;
+}
+
+.delete-btn:hover {
+  opacity: 0.8;
 }
 
 .empty-row {

@@ -13,8 +13,11 @@ function Register() {
     setError,
     clearErrors,
     resetField,
+    watch,
     formState: { errors },
   } = useForm();
+
+  const password = watch("password");
 
   // 🔐 Generate captcha
   const generateCaptcha = () => {
@@ -28,6 +31,7 @@ function Register() {
 
   // ✅ Submit handler
   const onSubmit = (data) => {
+    // Captcha validation
     if (data.captcha !== captcha) {
       setError("captcha", {
         type: "manual",
@@ -38,8 +42,17 @@ function Register() {
       return;
     }
 
+    // Confirm password validation
+    if (data.password !== data.confirmPassword) {
+      setError("confirmPassword", {
+        type: "manual",
+        message: "Passwords do not match",
+      });
+      return;
+    }
+
     clearErrors();
-    navigate("/login"); // move to login page
+    navigate("/login");
   };
 
   return (
@@ -47,37 +60,19 @@ function Register() {
       <form className="register-card" onSubmit={handleSubmit(onSubmit)}>
         <h3>Register</h3>
 
-        {/* First Name */}
+        {/* Name */}
         <input
           type="text"
-          placeholder="First Name"
-          {...register("firstName", {
-            required: "First name is required",
+          placeholder="Name"
+          {...register("name", {
+            required: "Name is required",
             minLength: {
               value: 2,
               message: "Minimum 2 characters",
             },
           })}
         />
-        {errors.firstName && (
-          <p className="error">{errors.firstName.message}</p>
-        )}
-
-        {/* Last Name */}
-        <input
-          type="text"
-          placeholder="Last Name"
-          {...register("lastName", {
-            required: "Last name is required",
-            minLength: {
-              value: 2,
-              message: "Minimum 2 characters",
-            },
-          })}
-        />
-        {errors.lastName && (
-          <p className="error">{errors.lastName.message}</p>
-        )}
+        {errors.name && <p className="error">{errors.name.message}</p>}
 
         {/* Mobile */}
         <input
@@ -92,8 +87,34 @@ function Register() {
             },
           })}
         />
-        {errors.mobile && (
-          <p className="error">{errors.mobile.message}</p>
+        {errors.mobile && <p className="error">{errors.mobile.message}</p>}
+
+        {/* Password */}
+        <input
+          type="password"
+          placeholder="Password"
+          {...register("password", {
+            required: "Password is required",
+            minLength: {
+              value: 6,
+              message: "Minimum 6 characters required",
+            },
+          })}
+        />
+        {errors.password && <p className="error">{errors.password.message}</p>}
+
+        {/* Confirm Password */}
+        <input
+          type="password"
+          placeholder="Confirm Password"
+          {...register("confirmPassword", {
+            required: "Confirm password is required",
+            validate: (value) =>
+              value === password || "Passwords do not match",
+          })}
+        />
+        {errors.confirmPassword && (
+          <p className="error">{errors.confirmPassword.message}</p>
         )}
 
         {/* Captcha */}
@@ -115,9 +136,7 @@ function Register() {
             required: "Captcha is required",
           })}
         />
-        {errors.captcha && (
-          <p className="error">{errors.captcha.message}</p>
-        )}
+        {errors.captcha && <p className="error">{errors.captcha.message}</p>}
 
         <button type="submit" className="register-btn">
           Register

@@ -2,14 +2,14 @@ let shows = [
   {
     _id: "1",
     movie: { name: "Avengers: Endgame" },
-    theatre: "PVR Cinemas",
+    screen: "PVR Cinemas",
     showTime: "10:00 AM",
     price: 250,
   },
   {
     _id: "2",
     movie: { name: "KGF Chapter 2" },
-    theatre: "INOX",
+    screen: "INOX",
     showTime: "1:30 PM",
     price: 220,
   },

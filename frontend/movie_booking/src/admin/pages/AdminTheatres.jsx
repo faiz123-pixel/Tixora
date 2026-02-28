@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import {
   getTheatres,
   deleteTheatre,
@@ -9,11 +10,15 @@ import "./css/AdminTheatres.css";
 
 function AdminTheatres() {
   const [theatres, setTheatres] = useState([]);
-  const [form, setForm] = useState({
-    name: "",
-    city: "",
-  });
   const [editId, setEditId] = useState(null);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    formState: { errors },
+  } = useForm();
 
   useEffect(() => {
     loadTheatres();
@@ -24,26 +29,24 @@ function AdminTheatres() {
     setTheatres(data);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
+  const onSubmit = async (data) => {
     if (editId) {
-      await updateTheatre(editId, form);
+      await updateTheatre(editId, data);
       setEditId(null);
     } else {
-      await createTheatre(form);
+      await createTheatre(data);
     }
 
-    setForm({ name: "", city: "" });
+    reset();
     loadTheatres();
   };
 
   const handleEdit = (theatre) => {
     setEditId(theatre._id);
-    setForm({
-      name: theatre.name,
-      city: theatre.city,
-    });
+
+    setValue("name", theatre.name);
+    setValue("cityName", theatre.cityName);
+    setValue("address", theatre.address);
   };
 
   const handleDelete = async (id) => {
@@ -57,23 +60,33 @@ function AdminTheatres() {
     <div className="theatres-container">
       <h2>Theatres Management</h2>
 
-      {/* Add / Edit Form */}
-      <form className="theatre-form" onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Theatre Name"
-          value={form.name}
-          onChange={(e) => setForm({ ...form, name: e.target.value })}
-          required
-        />
+      {/* Form */}
+      <form className="theatre-form" onSubmit={handleSubmit(onSubmit)}>
 
         <input
           type="text"
-          placeholder="City"
-          value={form.city}
-          onChange={(e) => setForm({ ...form, city: e.target.value })}
-          required
+          placeholder="Theatre Name"
+          {...register("name", { required: "Theatre name is required" })}
         />
+        {errors.name && <p className="error">{errors.name.message}</p>}
+
+        <input
+          type="text"
+          placeholder="City Name"
+          {...register("cityName", { required: "City name is required" })}
+        />
+        {errors.cityName && (
+          <p className="error">{errors.cityName.message}</p>
+        )}
+
+        <input
+          type="text"
+          placeholder="Address"
+          {...register("address", { required: "Address is required" })}
+        />
+        {errors.address && (
+          <p className="error">{errors.address.message}</p>
+        )}
 
         <button type="submit">
           {editId ? "Update Theatre" : "Add Theatre"}
@@ -85,7 +98,8 @@ function AdminTheatres() {
         <thead>
           <tr>
             <th>Theatre Name</th>
-            <th>City</th>
+            <th>City Name</th>
+            <th>Address</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -93,7 +107,7 @@ function AdminTheatres() {
         <tbody>
           {theatres.length === 0 ? (
             <tr>
-              <td colSpan="3" className="empty-row">
+              <td colSpan="4" className="empty-row">
                 No theatres available
               </td>
             </tr>
@@ -101,7 +115,8 @@ function AdminTheatres() {
             theatres.map((t) => (
               <tr key={t._id}>
                 <td>{t.name}</td>
-                <td>{t.city}</td>
+                <td>{t.cityName}</td>
+                <td>{t.address}</td>
                 <td>
                   <button
                     className="edit-btn"
