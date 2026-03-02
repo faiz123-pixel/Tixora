@@ -7,8 +7,12 @@ function Sidebar({ isMobile, closeSidebar }) {
     { name: "Dashboard", path: "dashboard", icon: "📊" },
     { name: "Movies", path: "movies", icon: "🎬" },
     { name: "Theatres", path: "theatres", icon: "🏢" },
+    { name: "Screens", path: "screens", icon: "🖥️" },
+    { name: "Seats", path: "seats", icon: "💺" },
     { name: "Shows", path: "shows", icon: "🎥" },
     { name: "Bookings", path: "bookings", icon: "🎟️" },
+    { name: "BookingSeats", path: "booking-seats", icon: "🪑" },
+    { name: "Payments", path: "payments", icon: "💳" },
     { name: "Users", path: "users", icon: "👑" },
   ];
 
@@ -78,15 +82,6 @@ function Sidebar({ isMobile, closeSidebar }) {
       color: "#2C2B30",
       fontWeight: "600",
     },
-
-    logoutBtn: {
-      padding: "12px",
-      backgroundColor: "#4F4F51",
-      borderRadius: "8px",
-      cursor: "pointer",
-      textAlign: "center",
-      marginTop: "20px",
-    },
   };
 
   return (
@@ -121,7 +116,6 @@ function Sidebar({ isMobile, closeSidebar }) {
           ))}
         </div>
       </div>
-
     </aside>
   );
 }

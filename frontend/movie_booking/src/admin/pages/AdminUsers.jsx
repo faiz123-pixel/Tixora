@@ -98,7 +98,7 @@ function AdminUsers() {
           <option value="SUPER_ADMIN">SUPER ADMIN</option>
         </select>
 
-        <button type="submit">Create User</button>
+        <button type="submit">Create Admin</button>
       </form>
 
       {/* Users Table */}

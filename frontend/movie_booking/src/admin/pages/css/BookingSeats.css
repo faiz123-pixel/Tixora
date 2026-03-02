@@ -1,0 +1,89 @@
+/* ========================= */
+/* Page Container */
+/* ========================= */
+
+.booking-seats-container {
+  padding: 30px;
+  background: var(--dark-primary);
+  min-height: 100vh;
+  color: white;
+}
+
+.booking-seats-container h2 {
+  color: var(--accent-strong);
+  margin-bottom: 20px;
+}
+
+/* ========================= */
+/* Filter */
+/* ========================= */
+
+.filter-section {
+  margin-bottom: 20px;
+}
+
+.filter-section select {
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  background: var(--light-gray);
+  color: var(--dark-primary);
+  font-size: 14px;
+  cursor: pointer;
+  min-width: 200px;
+}
+
+.filter-section select:focus {
+  outline: 2px solid var(--accent-strong);
+}
+
+/* ========================= */
+/* Table */
+/* ========================= */
+
+.booking-seats-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--dark-secondary);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.booking-seats-table th,
+.booking-seats-table td {
+  padding: 12px;
+  text-align: center;
+}
+
+.booking-seats-table th {
+  background: var(--accent-strong);
+  color: white;
+}
+
+.booking-seats-table td {
+  color: var(--light-gray);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.booking-seats-table tr:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* ========================= */
+/* Price Highlight */
+/* ========================= */
+
+.price-cell {
+  font-weight: 600;
+  color: var(--accent-soft);
+}
+
+/* ========================= */
+/* Empty Row */
+/* ========================= */
+
+.empty-row {
+  padding: 20px;
+  text-align: center;
+  color: var(--light-gray);
+}

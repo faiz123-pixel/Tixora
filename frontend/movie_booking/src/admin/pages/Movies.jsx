@@ -119,10 +119,12 @@ function Movies() {
 
         <input
           type="date"
+          min={new Date().toISOString().split("T")[0]} // 👈 prevents past dates
           {...register("releaseDate", {
             required: "Release date is required",
           })}
         />
+
         {errors.releaseDate && (
           <p className="error">{errors.releaseDate.message}</p>
         )}

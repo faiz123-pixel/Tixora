@@ -6,10 +6,16 @@ import {
   updateShow,
   deleteShow,
 } from "../services/showsService";
+
+import { getMovies } from "../services/movieService";
+import { getScreens } from "../services/screenService";
+
 import "./css/AdminShows.css";
 
 function AdminShows() {
   const [shows, setShows] = useState([]);
+  const [movies, setMovies] = useState([]);
+  const [screens, setScreens] = useState([]);
   const [editId, setEditId] = useState(null);
 
   const {
@@ -22,71 +28,102 @@ function AdminShows() {
 
   useEffect(() => {
     loadShows();
+    loadMovies();
+    loadScreens();
   }, []);
 
-  const loadShows = () => {
-    getShows().then(setShows);
+  const loadShows = async () => {
+    const data = await getShows();
+    setShows(data || []);
   };
 
-  const onSubmit = (data) => {
+  const loadMovies = async () => {
+    const data = await getMovies();
+    setMovies(data || []);
+  };
+
+  const loadScreens = async () => {
+    const data = await getScreens();
+    setScreens(data || []);
+  };
+
+  const onSubmit = async (data) => {
     const showData = {
-      movie: data.movie,
-      screen: data.screen,
+      movie: data.movie,      // movie ID
+      screen: data.screen,    // screen ID
       showTime: data.showTime,
       basePrice: Number(data.basePrice),
     };
 
     if (editId) {
-      updateShow(editId, showData).then(() => {
-        setEditId(null);
-        loadShows();
-      });
+      await updateShow(editId, showData);
+      setEditId(null);
     } else {
-      createShow(showData).then(loadShows);
+      await createShow(showData);
     }
 
     reset();
+    loadShows();
   };
 
   const handleEdit = (show) => {
     setEditId(show._id);
 
-    setValue("movie", show.movie);
-    setValue("screen", show.screen);
-    setValue("showTime", show.showTime);
+    setValue("movie", show.movie?._id);
+    setValue("screen", show.screen?._id);
+    setValue(
+      "showTime",
+      show.showTime?.slice(0, 16) // required for datetime-local
+    );
     setValue("basePrice", show.basePrice);
   };
 
-  const handleDelete = (id) => {
-    deleteShow(id).then(loadShows);
+  const handleDelete = async (id) => {
+    if (window.confirm("Are you sure you want to delete this show?")) {
+      await deleteShow(id);
+      loadShows();
+    }
   };
 
   return (
     <div className="shows-container">
       <h2>Shows Management</h2>
 
-      {/* Form */}
+      {/* ===== FORM ===== */}
       <form onSubmit={handleSubmit(onSubmit)} className="show-form">
-        <input
-          type="text"
-          placeholder="Movie"
-          {...register("movie", { required: "Movie is required" })}
-        />
+        
+        {/* Movie Dropdown */}
+        <select {...register("movie", { required: "Movie is required" })}>
+          <option value="">-- Select Movie --</option>
+          {movies.map((movie) => (
+            <option key={movie._id} value={movie._id}>
+              {movie.name}
+            </option>
+          ))}
+        </select>
         {errors.movie && <p className="error">{errors.movie.message}</p>}
 
-        <input
-          type="text"
-          placeholder="Screen"
-          {...register("screen", { required: "Screen is required" })}
-        />
+        {/* Screen Dropdown */}
+        <select {...register("screen", { required: "Screen is required" })}>
+          <option value="">-- Select Screen --</option>
+          {screens.map((screen) => (
+            <option key={screen._id} value={screen._id}>
+              {screen.name}
+            </option>
+          ))}
+        </select>
         {errors.screen && <p className="error">{errors.screen.message}</p>}
 
+        {/* Show Time */}
         <input
           type="datetime-local"
           {...register("showTime", { required: "Show time is required" })}
         />
-        {errors.showTime && <p className="error">{errors.showTime.message}</p>}
+        {errors.showTime && (
+          <p className="error">{errors.showTime.message}</p>
+        )}
 
+        {/* Base Price */}
         <input
           type="number"
           placeholder="Base Price"
@@ -99,10 +136,24 @@ function AdminShows() {
           <p className="error">{errors.basePrice.message}</p>
         )}
 
-        <button type="submit">{editId ? "Update Show" : "Add Show"}</button>
+        <button type="submit">
+          {editId ? "Update Show" : "Add Show"}
+        </button>
+
+        {editId && (
+          <button
+            type="button"
+            onClick={() => {
+              reset();
+              setEditId(null);
+            }}
+          >
+            Cancel
+          </button>
+        )}
       </form>
 
-      {/* Table */}
+      {/* ===== TABLE ===== */}
       <table className="shows-table">
         <thead>
           <tr>
@@ -123,13 +174,23 @@ function AdminShows() {
           ) : (
             shows.map((show) => (
               <tr key={show._id}>
-                <td>{show.movie?.name}</td>
-                <td>{show.screen}</td>
+                <td>{show.movie?.name || "N/A"}</td>
+                <td>{show.screen?.name || "N/A"}</td>
                 <td>{new Date(show.showTime).toLocaleString()}</td>
                 <td>₹{show.basePrice}</td>
                 <td>
-                  <button onClick={() => handleEdit(show)}>Edit</button>
-                  <button onClick={() => handleDelete(show._id)}>Delete</button>
+                  <button
+                    type="button"
+                    onClick={() => handleEdit(show)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleDelete(show._id)}
+                  >
+                    Delete
+                  </button>
                 </td>
               </tr>
             ))

@@ -1,0 +1,144 @@
+/* ========================= */
+/* Page Container */
+/* ========================= */
+
+.screens-container {
+  padding: 30px;
+  background: var(--dark-primary);
+  min-height: 100vh;
+  color: white;
+}
+
+.screens-container h2 {
+  color: var(--accent-strong);
+  margin-bottom: 20px;
+}
+
+/* ========================= */
+/* Form */
+/* ========================= */
+
+.screen-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.screen-form input {
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  background: var(--light-gray);
+  color: var(--dark-primary);
+  font-size: 14px;
+}
+
+.screen-form input:focus {
+  outline: 2px solid var(--accent-strong);
+}
+
+.screen-form button {
+  background: var(--accent-strong);
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.3s ease;
+}
+
+.screen-form button:hover {
+  background: var(--accent-soft);
+  color: var(--dark-primary);
+}
+
+/* Error message */
+.error {
+  color: crimson;
+  font-size: 13px;
+  margin-top: -8px;
+}
+
+/* ========================= */
+/* Table */
+/* ========================= */
+
+.screens-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--dark-secondary);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.screens-table th,
+.screens-table td {
+  padding: 12px;
+  text-align: center;
+}
+
+.screens-table th {
+  background: var(--accent-strong);
+  color: white;
+}
+
+.screens-table td {
+  color: var(--light-gray);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.screens-table tr:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* ========================= */
+/* Buttons */
+/* ========================= */
+
+.screens-table button {
+  margin: 0 5px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.edit-btn {
+  background: var(--accent-soft);
+  color: var(--dark-primary);
+}
+
+.edit-btn:hover {
+  opacity: 0.8;
+}
+
+.delete-btn {
+  background: crimson;
+  color: white;
+}
+
+.delete-btn:hover {
+  opacity: 0.8;
+}
+
+/* ========================= */
+/* Highlight Column */
+/* ========================= */
+
+.total-seats {
+  font-weight: 600;
+  color: var(--accent-strong);
+}
+
+/* ========================= */
+/* Empty Row */
+/* ========================= */
+
+.empty-row {
+  padding: 20px;
+  text-align: center;
+  color: var(--light-gray);
+}

@@ -1,0 +1,120 @@
+/* ========================= */
+/* Page Container */
+/* ========================= */
+
+.payments-container {
+  padding: 30px;
+  background: var(--dark-primary);
+  min-height: 100vh;
+  color: white;
+}
+
+.payments-container h2 {
+  color: var(--accent-strong);
+  margin-bottom: 20px;
+}
+
+/* ========================= */
+/* Filter */
+/* ========================= */
+
+.filter-section {
+  margin-bottom: 20px;
+}
+
+.filter-section select {
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  background: var(--light-gray);
+  color: var(--dark-primary);
+  font-size: 14px;
+  cursor: pointer;
+  min-width: 200px;
+}
+
+.filter-section select:focus {
+  outline: 2px solid var(--accent-strong);
+}
+
+/* ========================= */
+/* Table */
+/* ========================= */
+
+.payments-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--dark-secondary);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.payments-table th,
+.payments-table td {
+  padding: 12px;
+  text-align: center;
+}
+
+.payments-table th {
+  background: var(--accent-strong);
+  color: white;
+}
+
+.payments-table td {
+  color: var(--light-gray);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.payments-table tr:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* ========================= */
+/* Highlight Columns */
+/* ========================= */
+
+.booking-id {
+  font-weight: 600;
+  color: var(--accent-soft);
+}
+
+.transaction-id {
+  font-size: 13px;
+  opacity: 0.9;
+}
+
+/* ========================= */
+/* Status Badges */
+/* ========================= */
+
+.status-badge {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-success {
+  background: rgba(0, 255, 128, 0.15);
+  color: #00ff80;
+}
+
+.status-failed {
+  background: rgba(255, 0, 0, 0.15);
+  color: crimson;
+}
+
+.status-pending {
+  background: rgba(255, 193, 7, 0.15);
+  color: #ffc107;
+}
+
+/* ========================= */
+/* Empty Row */
+/* ========================= */
+
+.empty-row {
+  padding: 20px;
+  text-align: center;
+  color: var(--light-gray);
+}
