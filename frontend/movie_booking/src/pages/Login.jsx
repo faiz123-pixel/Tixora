@@ -52,7 +52,7 @@ function Login() {
           type="tel"
           placeholder="Mobile Number"
           maxLength="10"
-          {...register("mobile", {
+          {...register("mobileNo", {
             required: "Mobile number is required",
             pattern: {
               value: /^[0-9]{10}$/,
@@ -60,8 +60,8 @@ function Login() {
             },
           })}
         />
-        {errors.mobile && (
-          <p className="error">{errors.mobile.message}</p>
+        {errors.mobileNo && (
+          <p className="error">{errors.mobileNo.message}</p>
         )}
 
         {/* 🔑 Password */}

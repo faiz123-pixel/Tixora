@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import "./css/Register.css";
+import { userApi } from "../services/api";
+
 
 function Register() {
   const navigate = useNavigate();
@@ -30,30 +32,35 @@ function Register() {
   }, []);
 
   // ✅ Submit handler
-  const onSubmit = (data) => {
-    // Captcha validation
-    if (data.captcha !== captcha) {
-      setError("captcha", {
-        type: "manual",
-        message: "Captcha does not match",
-      });
-      generateCaptcha();
-      resetField("captcha");
-      return;
-    }
+  const onSubmit = async (data) => {
+  if (data.captcha !== captcha) {
+    setError("captcha", {
+      type: "manual",
+      message: "Captcha does not match",
+    });
+    generateCaptcha();
+    resetField("captcha");
+    return;
+  }
 
-    // Confirm password validation
-    if (data.password !== data.confirmPassword) {
-      setError("confirmPassword", {
-        type: "manual",
-        message: "Passwords do not match",
-      });
-      return;
-    }
+  clearErrors();
 
-    clearErrors();
+  try {
+    const { name, mobileNo, password } = data;
+
+    await userApi.post("/register", {
+      name,
+      mobileNo,
+      password,
+    });
+
+    alert("Registration completed");
     navigate("/login");
-  };
+
+  } catch (error) {
+    alert("Something went wrong");
+  }
+};
 
   return (
     <div className="register-page">
@@ -79,15 +86,25 @@ function Register() {
           type="tel"
           placeholder="Mobile Number"
           maxLength="10"
-          {...register("mobile", {
+          {...register("mobileNo", {
             required: "Mobile number is required",
             pattern: {
               value: /^[0-9]{10}$/,
               message: "Enter valid 10-digit mobile number",
             },
+            validate:async (value)=>{
+              try{
+              const response=await userApi.get(`/check-mobileNo?mobileNo=${value}`);
+              const exists=response.data;
+              return exists? "Mobile Number already exists": true;
+              }catch(error)
+              {
+                return "Somthin went Wrong";
+              }
+            },
           })}
         />
-        {errors.mobile && <p className="error">{errors.mobile.message}</p>}
+        {errors.mobileNo && <p className="error">{errors.mobileNo.message}</p>}
 
         {/* Password */}
         <input

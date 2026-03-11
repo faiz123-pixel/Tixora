@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import {
-  getMovies,
-  deleteMovie,
-  createMovie,
-  updateMovie,
-} from "../services/movieService";
+// import {
+//   getMovies,
+//   deleteMovie,
+//   createMovie,
+//   updateMovie,
+// } from "../services/movieService";
 import "./css/Movies.css";
+import { movieApi } from "../../services/api";
 
 function Movies() {
   const [movies, setMovies] = useState([]);
@@ -25,16 +26,17 @@ function Movies() {
   }, []);
 
   const loadMovies = async () => {
-    const data = await getMovies();
-    setMovies(data);
+    const data = await movieApi.get("");
+    // console.log(data.data);
+    setMovies(data.data);
   };
 
   const onSubmit = async (data) => {
     if (editId) {
-      await updateMovie(editId, data);
+      await movieApi.put(`/${editId}`,data);
       setEditId(null);
     } else {
-      await createMovie(data);
+      await movieApi.post("",data);
     }
 
     reset();
@@ -42,7 +44,7 @@ function Movies() {
   };
 
   const handleEdit = (movie) => {
-    setEditId(movie._id);
+    setEditId(movie.id);
 
     setValue("title", movie.title);
     setValue("description", movie.description);
@@ -58,7 +60,7 @@ function Movies() {
 
   const handleDelete = async (id) => {
     if (window.confirm("Delete this movie?")) {
-      await deleteMovie(id);
+      await movieApi.delete(`/${id}`);
       loadMovies();
     }
   };
@@ -165,7 +167,7 @@ function Movies() {
             </tr>
           ) : (
             movies.map((movie) => (
-              <tr key={movie._id}>
+              <tr key={movie.id}>
                 <td>{movie.title}</td>
                 <td>{movie.language}</td>
                 <td>{movie.genre}</td>
@@ -181,7 +183,7 @@ function Movies() {
 
                   <button
                     className="delete-btn"
-                    onClick={() => handleDelete(movie._id)}
+                    onClick={() => handleDelete(movie.id)}
                   >
                     Delete
                   </button>

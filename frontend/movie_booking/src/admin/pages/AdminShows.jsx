@@ -1,16 +1,13 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import {
-  getShows,
   createShow,
   updateShow,
   deleteShow,
 } from "../services/showsService";
 
-import { getMovies } from "../services/movieService";
-import { getScreens } from "../services/screenService";
-
 import "./css/AdminShows.css";
+import { movieApi, screenApi, showApi } from "../../services/api";
 
 function AdminShows() {
   const [shows, setShows] = useState([]);
@@ -33,17 +30,20 @@ function AdminShows() {
   }, []);
 
   const loadShows = async () => {
-    const data = await getShows();
+    const data = await showApi.get("");
+    console.log(data);
     setShows(data || []);
   };
 
   const loadMovies = async () => {
-    const data = await getMovies();
+    const data = await movieApi.get("");
+    console.log(data);
     setMovies(data || []);
   };
 
   const loadScreens = async () => {
-    const data = await getScreens();
+    const data = await screenApi.get("");
+    console.log(data);
     setScreens(data || []);
   };
 
@@ -80,7 +80,7 @@ function AdminShows() {
 
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this show?")) {
-      await deleteShow(id);
+      await showApi.delete("",id);
       loadShows();
     }
   };

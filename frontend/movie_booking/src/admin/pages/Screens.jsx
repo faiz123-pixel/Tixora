@@ -1,14 +1,7 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import {
-  getScreens,
-  createScreen,
-  updateScreen,
-  deleteScreen,
-} from "../services/screenService";
-import { getTheatres } from "../services/theatreService";
-
 import "./css/Screens.css";
+import { screenApi, theatreApi } from "../../services/api";
 
 function Screens() {
   const [screens, setScreens] = useState([]);
@@ -29,22 +22,23 @@ function Screens() {
   }, []);
 
   const loadScreens = async () => {
-    const data = await getScreens();
-    setScreens(data || []);
+    const data = await screenApi.get("");
+    console.log(data.data);
+    setScreens(data.data || []);
   };
 
   const loadTheatres = async () => {
-    const data = await getTheatres();
-    setTheatres(data || []);
+    const data = await theatreApi.get("");
+    setTheatres(data.data || []);
   };
 
   const onSubmit = async (data) => {
     try {
       if (editId) {
-        await updateScreen(editId, data);
+        await screenApi.put(`/${editId}`,data);
         setEditId(null);
       } else {
-        await createScreen(data);
+        await screenApi.post("",data);
       }
 
       reset(); // clear form
@@ -55,19 +49,25 @@ function Screens() {
   };
 
   const handleEdit = (screen) => {
-    setEditId(screen._id);
+    setEditId(screen.id);
 
     setValue("name", screen.name);
-    setValue("theatre", screen.theatre?._id); // must match dropdown value
+    setValue("theatre", screen.theatre?.id); // must match dropdown value
     setValue("totalSeats", screen.totalSeats);
   };
 
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this screen?")) {
-      await deleteScreen(id);
+      await screenApi.delete(`/${id}`);
       loadScreens();
     }
   };
+
+  const theatreName=async (id)=>{
+    const data = await theatreApi.get(`/${id}`);
+    return data.data.name;
+  }
+
 
   return (
     <div className="screens-page">
@@ -82,13 +82,13 @@ function Screens() {
         {errors.name && <p className="error">{errors.name.message}</p>}
 
         <select
-          {...register("theatre", {
+          {...register("theatreId", {
             required: "Theatre is required",
           })}
         >
           <option value="">-- Select Theatre --</option>
           {theatres.map((theatre) => (
-            <option key={theatre._id} value={theatre._id}>
+            <option key={theatre.id} value={theatre.id}>
               {theatre.name}
             </option>
           ))}
@@ -144,9 +144,10 @@ function Screens() {
             </tr>
           ) : (
             screens.map((screen) => (
-              <tr key={screen._id}>
+              <tr key={screen.id}>
                 <td>{screen.name}</td>
-                <td>{screen.theatre?.name || "N/A"}</td>
+                <td>{screen.name || "N/A"}</td>
+                {console.log(theatreName(screen.theatreId))}
                 <td className="total-seats">{screen.totalSeats}</td>
                 <td>
                   <button
@@ -160,7 +161,7 @@ function Screens() {
                   <button
                     type="button"
                     className="delete-btn"
-                    onClick={() => handleDelete(screen._id)}
+                    onClick={() => handleDelete(screen.id)}
                   >
                     Delete
                   </button>

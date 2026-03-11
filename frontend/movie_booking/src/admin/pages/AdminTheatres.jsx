@@ -1,12 +1,7 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import {
-  getTheatres,
-  deleteTheatre,
-  createTheatre,
-  updateTheatre,
-} from "../services/theatreService";
 import "./css/AdminTheatres.css";
+import { theatreApi } from "../../services/api";
 
 function AdminTheatres() {
   const [theatres, setTheatres] = useState([]);
@@ -25,24 +20,23 @@ function AdminTheatres() {
   }, []);
 
   const loadTheatres = async () => {
-    const data = await getTheatres();
-    setTheatres(data);
+    const data = await theatreApi.get("");
+    setTheatres(data.data);
   };
 
   const onSubmit = async (data) => {
     if (editId) {
-      await updateTheatre(editId, data);
+      await theatreApi.put(`/${editId}`,data);
       setEditId(null);
     } else {
-      await createTheatre(data);
+      await theatreApi.post("",data);
     }
-
     reset();
     loadTheatres();
   };
 
   const handleEdit = (theatre) => {
-    setEditId(theatre._id);
+    setEditId(theatre.id);
 
     setValue("name", theatre.name);
     setValue("cityName", theatre.cityName);
@@ -51,7 +45,7 @@ function AdminTheatres() {
 
   const handleDelete = async (id) => {
     if (window.confirm("Delete this theatre?")) {
-      await deleteTheatre(id);
+      await theatreApi.delete(`/${id}`);
       loadTheatres();
     }
   };
@@ -113,7 +107,7 @@ function AdminTheatres() {
             </tr>
           ) : (
             theatres.map((t) => (
-              <tr key={t._id}>
+              <tr key={t.id}>
                 <td>{t.name}</td>
                 <td>{t.cityName}</td>
                 <td>{t.address}</td>
@@ -127,7 +121,7 @@ function AdminTheatres() {
 
                   <button
                     className="delete-btn"
-                    onClick={() => handleDelete(t._id)}
+                    onClick={() => handleDelete(t.id)}
                   >
                     Delete
                   </button>

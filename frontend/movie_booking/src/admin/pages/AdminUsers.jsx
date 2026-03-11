@@ -95,7 +95,6 @@ function AdminUsers() {
         {/* Role Dropdown */}
         <select {...register("role", { required: true })}>
           <option value="ADMIN">ADMIN</option>
-          <option value="SUPER_ADMIN">SUPER ADMIN</option>
         </select>
 
         <button type="submit">Create Admin</button>
