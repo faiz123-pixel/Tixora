@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { getPayments } from "../services/paymentService";
 import "./css/Payments.css";
+import { paymentApi } from "../../services/api";
 
 function Payments() {
   const [payments, setPayments] = useState([]);
@@ -16,25 +16,25 @@ function Payments() {
   }, [statusFilter, payments]);
 
   const loadPayments = async () => {
-    const data = await getPayments();
-    setPayments(data);
-    setFilteredPayments(data);
+    try {
+      const response = await paymentApi.get("");
+      setPayments(response.data || []);
+      setFilteredPayments(response.data || []);
+    } catch (error) {
+      console.error("Failed to load payments", error);
+    }
   };
 
   const applyFilter = () => {
-    let data = [...payments];
+    const filtered = payments.filter((payment) => {
+      return !statusFilter || payment.status === statusFilter;
+    });
 
-    if (statusFilter) {
-      data = data.filter(
-        (payment) => payment.status === statusFilter
-      );
-    }
-
-    setFilteredPayments(data);
+    setFilteredPayments(filtered);
   };
 
   const uniqueStatuses = [
-    ...new Set(payments.map((p) => p.status)),
+    ...new Set(payments.map((p) => p.status).filter(Boolean)),
   ];
 
   return (
@@ -77,16 +77,13 @@ function Payments() {
             </tr>
           ) : (
             filteredPayments.map((payment) => (
-              <tr key={payment._id}>
+              <tr key={payment.id}>
                 <td className="booking-id">
-                  {payment.bookingId?._id || payment.bookingId}
+                  {payment.bookingId?.id || payment.bookingId}
                 </td>
 
-                <td>{payment.method}</td>
-
-                <td className="transaction-id">
-                  {payment.transactionId}
-                </td>
+                <td>{payment.method || "N/A"}</td>
+                <td>{payment.transactionId || "N/A"}</td>
 
                 <td>
                   <span
@@ -94,8 +91,8 @@ function Payments() {
                       payment.status === "FAILED"
                         ? "status-failed"
                         : payment.status === "PENDING"
-                        ? "status-pending"
-                        : "status-success"
+                          ? "status-pending"
+                          : "status-success"
                     }`}
                   >
                     {payment.status}

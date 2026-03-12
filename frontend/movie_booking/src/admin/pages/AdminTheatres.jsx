@@ -25,14 +25,20 @@ function AdminTheatres() {
   };
 
   const onSubmit = async (data) => {
-    if (editId) {
-      await theatreApi.put(`/${editId}`,data);
-      setEditId(null);
-    } else {
-      await theatreApi.post("",data);
+    try {
+      if (editId) {
+        await theatreApi.put(`/${editId}`, data);
+        setEditId(null);
+      } else {
+        await theatreApi.post("", data);
+      }
+
+      reset();
+      loadTheatres();
+    } catch (error) {
+      console.error(error);
+      alert("Something went wrong");
     }
-    reset();
-    loadTheatres();
   };
 
   const handleEdit = (theatre) => {
@@ -56,7 +62,6 @@ function AdminTheatres() {
 
       {/* Form */}
       <form className="theatre-form" onSubmit={handleSubmit(onSubmit)}>
-
         <input
           type="text"
           placeholder="Theatre Name"
@@ -69,18 +74,14 @@ function AdminTheatres() {
           placeholder="City Name"
           {...register("cityName", { required: "City name is required" })}
         />
-        {errors.cityName && (
-          <p className="error">{errors.cityName.message}</p>
-        )}
+        {errors.cityName && <p className="error">{errors.cityName.message}</p>}
 
         <input
           type="text"
           placeholder="Address"
           {...register("address", { required: "Address is required" })}
         />
-        {errors.address && (
-          <p className="error">{errors.address.message}</p>
-        )}
+        {errors.address && <p className="error">{errors.address.message}</p>}
 
         <button type="submit">
           {editId ? "Update Theatre" : "Add Theatre"}
@@ -113,6 +114,7 @@ function AdminTheatres() {
                 <td>{t.address}</td>
                 <td>
                   <button
+                    type="button"
                     className="edit-btn"
                     onClick={() => handleEdit(t)}
                   >
@@ -120,6 +122,7 @@ function AdminTheatres() {
                   </button>
 
                   <button
+                    type="button"
                     className="delete-btn"
                     onClick={() => handleDelete(t.id)}
                   >

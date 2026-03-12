@@ -45,6 +45,7 @@ function Screens() {
       loadScreens(); // reload table
     } catch (error) {
       console.error("Error saving screen:", error);
+      alert("Somthing went wrong");
     }
   };
 
@@ -52,7 +53,7 @@ function Screens() {
     setEditId(screen.id);
 
     setValue("name", screen.name);
-    setValue("theatre", screen.theatre?.id); // must match dropdown value
+    setValue("theatreId", screen.theatreId); // must match dropdown value
     setValue("totalSeats", screen.totalSeats);
   };
 
@@ -63,10 +64,10 @@ function Screens() {
     }
   };
 
-  const theatreName=async (id)=>{
-    const data = await theatreApi.get(`/${id}`);
-    return data.data.name;
-  }
+ const getTheatreName = (id) => {
+  const theatre = theatres.find((t) => t.id === id);
+  return theatre ? theatre.name : "N/A";
+};
 
 
   return (
@@ -144,10 +145,11 @@ function Screens() {
             </tr>
           ) : (
             screens.map((screen) => (
+              
               <tr key={screen.id}>
                 <td>{screen.name}</td>
-                <td>{screen.name || "N/A"}</td>
-                {console.log(theatreName(screen.theatreId))}
+                <td>{getTheatreName(screen.theatreId)}</td>
+        
                 <td className="total-seats">{screen.totalSeats}</td>
                 <td>
                   <button

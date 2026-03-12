@@ -14,6 +14,7 @@ function Sidebar({ isMobile, closeSidebar }) {
     { name: "BookingSeats", path: "booking-seats", icon: "🪑" },
     { name: "Payments", path: "payments", icon: "💳" },
     { name: "Users", path: "users", icon: "👑" },
+    { name: "Messages", path: "messages", icon: "" },
   ];
 
   const styles = {

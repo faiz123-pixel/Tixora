@@ -24,6 +24,7 @@ import Screens from "../admin/pages/Screens";
 import Seats from "../admin/pages/Seats";
 import BookingSeats from "../admin/pages/BookingSeats";
 import Payments from "../admin/pages/Payments";
+import Messages from "../admin/pages/Message";
 
 
 const AppRoutes=createBrowserRouter(
@@ -71,6 +72,9 @@ const AppRoutes=createBrowserRouter(
 
       /* Bookings */
       { path: "bookings", element: <Bookings /> },
+
+      /* Message */
+      { path: "messages", element: <Messages /> },
 
     ],
   },

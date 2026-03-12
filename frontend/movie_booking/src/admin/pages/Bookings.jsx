@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { getBookings } from "../services/bookingService";
 import "./css/Bookings.css";
+import { bookingApi } from "../../services/api";
 
 function Bookings() {
   const [bookings, setBookings] = useState([]);
@@ -9,8 +9,14 @@ function Bookings() {
     loadBookings();
   }, []);
 
-  const loadBookings = () => {
-    getBookings().then(setBookings);
+  const loadBookings = async () => {
+    try {
+      const response = await bookingApi.get("");
+      setBookings(response.data || []);
+    } catch (error) {
+      console.error("Failed to load bookings", error);
+      alert("Somthin went wrong");
+    }
   };
 
   return (
@@ -22,13 +28,11 @@ function Bookings() {
           <p className="empty-row">No bookings available</p>
         ) : (
           bookings.map((b) => (
-            <div key={b._id} className="booking-card">
-              
-              <h4>Show: {b.show?.movie?.name || b.show}</h4>
+            <div key={b.id} className="booking-card">
+              <h4>Show: {b.show?.movie?.title || b.show}</h4>
 
               <p>
-                <strong>User:</strong>{" "}
-                {b.user?.name || b.user?.email || b.user}
+                <strong>User:</strong> {b.user?.name || b.user?.email || b.user}
               </p>
 
               <p>
@@ -37,9 +41,7 @@ function Bookings() {
 
               <p>
                 <strong>Date & Time:</strong>{" "}
-                {b.dateTime
-                  ? new Date(b.dateTime).toLocaleString()
-                  : "N/A"}
+                {b.dateTime ? new Date(b.dateTime).toLocaleString() : "N/A"}
               </p>
 
               <p>
@@ -54,7 +56,6 @@ function Bookings() {
                   {b.status || "Confirmed"}
                 </span>
               </p>
-
             </div>
           ))
         )}

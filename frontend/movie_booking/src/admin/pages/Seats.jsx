@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { getSeats } from "../services/seatService";
 import "./css/Seats.css";
+import { seatsApi } from "../../services/api";
 
 function Seats() {
   const [seats, setSeats] = useState([]);
@@ -17,37 +17,33 @@ function Seats() {
   }, [screenFilter, typeFilter, seats]);
 
   const loadSeats = async () => {
-    const data = await getSeats();
-    setSeats(data);
-    setFilteredSeats(data);
+    try {
+      const response = await seatsApi.get("");
+      setSeats(response.data);
+      setFilteredSeats(response.data);
+    } catch (error) {
+      console.error("Failed to load seats", error);
+      alert("Somthing went wrong");
+    }
   };
 
   const applyFilters = () => {
-    let data = [...seats];
-
-    if (screenFilter) {
-      data = data.filter(
-        (seat) => seat.screen?.name === screenFilter
+    const filtered = seats.filter((seat) => {
+      return (
+        (!screenFilter || seat.screen?.name === screenFilter) &&
+        (!typeFilter || seat.type === typeFilter)
       );
-    }
+    });
 
-    if (typeFilter) {
-      data = data.filter(
-        (seat) => seat.type === typeFilter
-      );
-    }
-
-    setFilteredSeats(data);
+    setFilteredSeats(filtered);
   };
 
   // Unique screen list
   const uniqueScreens = [
-    ...new Set(seats.map((seat) => seat.screen?.name)),
+    ...new Set(seats.map((seat) => seat.screen?.name).filter(Boolean)),
   ];
 
-  const uniqueTypes = [
-    ...new Set(seats.map((seat) => seat.type)),
-  ];
+  const uniqueTypes = [...new Set(seats.map((seat) => seat.type))];
 
   return (
     <div className="seats-container">
@@ -98,7 +94,7 @@ function Seats() {
             </tr>
           ) : (
             filteredSeats.map((seat) => (
-              <tr key={seat._id}>
+              <tr key={seat.id}>
                 <td className="seat-number">{seat.seatNumber}</td>
                 <td>{seat.screen?.name}</td>
                 <td className="seat-type">{seat.type}</td>

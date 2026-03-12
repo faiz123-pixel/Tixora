@@ -1,11 +1,5 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import {
-  createShow,
-  updateShow,
-  deleteShow,
-} from "../services/showsService";
-
 import "./css/AdminShows.css";
 import { movieApi, screenApi, showApi } from "../../services/api";
 
@@ -31,46 +25,45 @@ function AdminShows() {
 
   const loadShows = async () => {
     const data = await showApi.get("");
-    console.log(data);
-    setShows(data || []);
+    console.log(data.data);
+    setShows(data.data || []);
   };
 
   const loadMovies = async () => {
     const data = await movieApi.get("");
-    console.log(data);
-    setMovies(data || []);
+    console.log(data.data);
+    setMovies(data.data || []);
   };
 
   const loadScreens = async () => {
     const data = await screenApi.get("");
-    console.log(data);
-    setScreens(data || []);
+    console.log(data.data);
+    setScreens(data.data || []);
   };
 
   const onSubmit = async (data) => {
-    const showData = {
-      movie: data.movie,      // movie ID
-      screen: data.screen,    // screen ID
-      showTime: data.showTime,
-      basePrice: Number(data.basePrice),
-    };
 
+  try {
     if (editId) {
-      await updateShow(editId, showData);
+      await showApi.put(`/${editId}`, data);
       setEditId(null);
     } else {
-      await createShow(showData);
+      await showApi.post("", data);
     }
 
     reset();
     loadShows();
-  };
+  } catch (error) {
+    console.error("Error saving show", error);
+    alert("Somthin went wrong");
+  }
+};
 
   const handleEdit = (show) => {
-    setEditId(show._id);
+    setEditId(show.id);
 
-    setValue("movie", show.movie?._id);
-    setValue("screen", show.screen?._id);
+    setValue("movieId", show.movie?.id);
+    setValue("screenId", show.screen?.id);
     setValue(
       "showTime",
       show.showTime?.slice(0, 16) // required for datetime-local
@@ -80,10 +73,20 @@ function AdminShows() {
 
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this show?")) {
-      await showApi.delete("",id);
+      await showApi.delete(`/${id}`);
       loadShows();
     }
   };
+
+  const getMovieName = (id) => {
+  const movie = movies.find((m) => m.id === id);
+  return movie ? movie.title : "N/A";
+};
+
+const getScreenName = (id) => {
+  const screen = screens.find((s) => s.id === id);
+  return screen ? screen.name : "N/A";
+};
 
   return (
     <div className="shows-container">
@@ -93,26 +96,26 @@ function AdminShows() {
       <form onSubmit={handleSubmit(onSubmit)} className="show-form">
         
         {/* Movie Dropdown */}
-        <select {...register("movie", { required: "Movie is required" })}>
+        <select {...register("movieId", { required: "Movie is required" })}>
           <option value="">-- Select Movie --</option>
           {movies.map((movie) => (
-            <option key={movie._id} value={movie._id}>
-              {movie.name}
+            <option key={movie.id} value={movie.id}>
+              {movie.title}
             </option>
           ))}
         </select>
-        {errors.movie && <p className="error">{errors.movie.message}</p>}
+        {errors.movieId && <p className="error">{errors.movieId.message}</p>}
 
         {/* Screen Dropdown */}
-        <select {...register("screen", { required: "Screen is required" })}>
+        <select {...register("screenId", { required: "Screen is required" })}>
           <option value="">-- Select Screen --</option>
           {screens.map((screen) => (
-            <option key={screen._id} value={screen._id}>
+            <option key={screen.id} value={screen.id}>
               {screen.name}
             </option>
           ))}
         </select>
-        {errors.screen && <p className="error">{errors.screen.message}</p>}
+        {errors.screenId && <p className="error">{errors.screenId.message}</p>}
 
         {/* Show Time */}
         <input
@@ -173,9 +176,9 @@ function AdminShows() {
             </tr>
           ) : (
             shows.map((show) => (
-              <tr key={show._id}>
-                <td>{show.movie?.name || "N/A"}</td>
-                <td>{show.screen?.name || "N/A"}</td>
+              <tr key={show.id}>
+                <td>{getMovieName(show.movieId)}</td>
+                <td>{getScreenName(show.screenId)}</td>
                 <td>{new Date(show.showTime).toLocaleString()}</td>
                 <td>₹{show.basePrice}</td>
                 <td>
@@ -187,7 +190,7 @@ function AdminShows() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => handleDelete(show._id)}
+                    onClick={() => handleDelete(show.id)}
                   >
                     Delete
                   </button>

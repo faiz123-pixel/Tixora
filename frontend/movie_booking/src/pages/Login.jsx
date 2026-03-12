@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import "./css/Login.css";
+import { loginApi } from "../services/api";
 
 function Login() {
   const navigate = useNavigate();
@@ -27,7 +28,7 @@ function Login() {
   }, []);
 
   // ✅ Submit handler
-  const onSubmit = (data) => {
+  const onSubmit =async (data) => {
     if (data.captcha !== captcha) {
       setError("captcha", {
         type: "manual",
@@ -37,7 +38,15 @@ function Login() {
       resetField("captcha");
       return;
     }
+    try {
+      console.log(data);
+      const res=await loginApi.post("",data);
+      console.log(res.data);
+    } catch (error) {
+      alert(error.message);
 
+      
+    }
     clearErrors();
     navigate("/admin"); // redirect after login
   };

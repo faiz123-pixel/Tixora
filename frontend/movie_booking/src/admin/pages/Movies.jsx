@@ -1,11 +1,5 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-// import {
-//   getMovies,
-//   deleteMovie,
-//   createMovie,
-//   updateMovie,
-// } from "../services/movieService";
 import "./css/Movies.css";
 import { movieApi } from "../../services/api";
 
@@ -32,15 +26,20 @@ function Movies() {
   };
 
   const onSubmit = async (data) => {
-    if (editId) {
-      await movieApi.put(`/${editId}`,data);
-      setEditId(null);
-    } else {
-      await movieApi.post("",data);
-    }
+    try {
+      if (editId) {
+        await movieApi.put(`/${editId}`, data);
+        setEditId(null);
+      } else {
+        await movieApi.post("", data);
+      }
 
-    reset();
-    loadMovies();
+      reset();
+      loadMovies();
+    } catch (error) {
+      console.error(error);
+      alert(error.response?.data || "Server error");
+    }
   };
 
   const handleEdit = (movie) => {

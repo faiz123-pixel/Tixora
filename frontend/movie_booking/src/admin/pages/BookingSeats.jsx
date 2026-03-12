@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { getBookingSeats } from "../services/bookingSeatService";
 import "./css/BookingSeats.css";
+import { bookingSeatApi } from "../../services/api";
 
 function BookingSeats() {
   const [bookingSeats, setBookingSeats] = useState([]);
@@ -16,25 +16,28 @@ function BookingSeats() {
   }, [showFilter, bookingSeats]);
 
   const loadBookingSeats = async () => {
-    const data = await getBookingSeats();
-    setBookingSeats(data);
-    setFilteredData(data);
-  };
+  try {
+    const response = await bookingSeatApi.get("");
+    setBookingSeats(response.data || []);
+    setFilteredData(response.data || []);
+  } catch (error) {
+    console.error("Failed to load booking seats", error);
+    alert("Somthing went wrong");
+  }
+};
 
   const applyFilter = () => {
     let data = [...bookingSeats];
 
     if (showFilter) {
-      data = data.filter(
-        (bs) => bs.show?.movieTitle === showFilter
-      );
+      data = data.filter((bs) => bs.show?.movieTitle === showFilter);
     }
 
     setFilteredData(data);
   };
 
   const uniqueShows = [
-    ...new Set(bookingSeats.map((bs) => bs.show?.movieTitle)),
+    ...new Set(bookingSeats.map((bs) => bs.show?.movieTitle).filter(Boolean)),
   ];
 
   return (
@@ -75,10 +78,10 @@ function BookingSeats() {
             </tr>
           ) : (
             filteredData.map((bs) => (
-              <tr key={bs._id}>
-                <td>{bs.booking?.bookingNumber}</td>
-                <td>{bs.show?.movieTitle}</td>
-                <td>{bs.seat?.seatNumber}</td>
+              <tr key={bs.id}>
+                <td>{bs.booking?.bookingNumber || "N/A"}</td>
+                <td>{bs.show?.movieTitle || "N/A"}</td>
+                <td>{bs.seat?.seatNumber || "N/A"}</td>
                 <td className="price-cell">₹ {bs.price}</td>
               </tr>
             ))

@@ -31,3 +31,6 @@ export const paymentApi= axios.create({
 export const messageApi= axios.create({
     baseURL:"http://localhost:8080/message"
 });
+export const loginApi= axios.create({
+    baseURL:"http://localhost:8080/auth/login"
+});

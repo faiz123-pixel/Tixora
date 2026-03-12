@@ -1,11 +1,7 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import {
-  getUsers,
-  deleteUser,
-  createSuperUser,
-} from "../services/userService";
 import "./css/AdminUsers.css";
+import { userApi } from "../../services/api";
 
 function AdminUsers() {
   const [users, setUsers] = useState([]);
@@ -13,32 +9,35 @@ function AdminUsers() {
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors },
-  } = useForm({
-    defaultValues: {
-      role: "ADMIN",
-    },
-  });
+  } = useForm();
 
   useEffect(() => {
     loadUsers();
   }, []);
 
-  const loadUsers = async () => {
-    const data = await getUsers();
-    setUsers(data);
-  };
+ const loadUsers = async () => {
+  try {
+    const response = await userApi.get("");
+    setUsers(response.data || []);
+  } catch (error) {
+    console.error("Failed to load users", error);
+    alert("Somthing went wrong");
+  }
+};
 
   const onSubmit = async (data) => {
-    await createSuperUser(data);
-    reset({ role: "ADMIN" });
-    loadUsers();
+    try {
+      await userApi.post("/registerAdmin", data);
+      loadUsers();
+    } catch (error) {
+      console.error("User creation failed", error);
+    }
   };
 
   const handleDelete = async (id) => {
     if (window.confirm("Delete this user?")) {
-      await deleteUser(id);
+      await userApi.delete(`/${id}`);
       loadUsers();
     }
   };
@@ -49,16 +48,13 @@ function AdminUsers() {
 
       {/* Create User Form */}
       <form className="user-form" onSubmit={handleSubmit(onSubmit)}>
-        
         {/* Name */}
         <input
           type="text"
           placeholder="Name"
           {...register("name", { required: "Name is required" })}
         />
-        {errors.name && (
-          <p className="error">{errors.name.message}</p>
-        )}
+        {errors.name && <p className="error">{errors.name.message}</p>}
 
         {/* Mobile Number */}
         <input
@@ -72,9 +68,7 @@ function AdminUsers() {
             },
           })}
         />
-        {errors.mobileNo && (
-          <p className="error">{errors.mobileNo.message}</p>
-        )}
+        {errors.mobileNo && <p className="error">{errors.mobileNo.message}</p>}
 
         {/* Password */}
         <input
@@ -88,14 +82,7 @@ function AdminUsers() {
             },
           })}
         />
-        {errors.password && (
-          <p className="error">{errors.password.message}</p>
-        )}
-
-        {/* Role Dropdown */}
-        <select {...register("role", { required: true })}>
-          <option value="ADMIN">ADMIN</option>
-        </select>
+        {errors.password && <p className="error">{errors.password.message}</p>}
 
         <button type="submit">Create Admin</button>
       </form>
@@ -120,25 +107,27 @@ function AdminUsers() {
             </tr>
           ) : (
             users.map((user) => (
-              <tr key={user._id}>
+              <tr key={user.id}>
                 <td>{user.name}</td>
                 <td>{user.mobileNo}</td>
+
                 <td>
                   <span
                     className={`role-badge ${
-                      user.role === "SUPER_ADMIN"
+                      user.role?.userRole === "ROLE_SUPER_ADMIN"
                         ? "super-admin"
                         : "admin-user"
                     }`}
                   >
-                    {user.role}
+                    {user.role?.userRole || user.role}
                   </span>
                 </td>
+
                 <td>
-                  {user.role !== "SUPER_ADMIN" && (
+                  {user.role?.userRole !== "ROLE_SUPER_ADMIN" && (
                     <button
                       className="delete-btn"
-                      onClick={() => handleDelete(user._id)}
+                      onClick={() => handleDelete(user.id)}
                     >
                       Delete
                     </button>
