@@ -1,53 +1,72 @@
-import React, { useMemo, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useMemo, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { generateSeats, seatPrices } from "../data/seats";
-import { useBookingContext } from "../context/BookingContext";
 import "./css/SeatSelection.css";
+
 function SeatSelection() {
   const navigate = useNavigate();
-  const { booking, setSeats } = useBookingContext();
+  const location = useLocation();
+
+  const { show } = location.state || {};
 
   const [selected, setSelected] = useState([]);
 
   /* 🚫 Block direct access */
-  useEffect(() => {
-    if (!booking.movie || !booking.theatre || !booking.showtime) {
-      navigate("/");
-    }
-  }, [booking, navigate]);
+  if (!show) {
+    navigate("/");
+    return null;
+  }
 
-  /* 🪑 Generate seats once */
+  const showId = show.id;
+
+  /* 🪑 Generate seats */
   const seatsData = useMemo(() => generateSeats(), []);
 
+  /* ⚡ Seat map for fast lookup */
+  const seatMap = useMemo(() => {
+    const map = {};
+    seatsData.forEach((s) => (map[s.id] = s));
+    return map;
+  }, [seatsData]);
+
+  /* 🪑 Toggle seat */
   const toggleSeat = (seat) => {
     if (seat.booked) return;
 
-    setSelected((prev) =>
-      prev.includes(seat.id)
-        ? prev.filter((s) => s !== seat.id)
-        : [...prev, seat.id]
-    );
+    setSelected((prev) => {
+      if (prev.includes(seat.id)) {
+        return prev.filter((s) => s !== seat.id);
+      }
+
+      if (prev.length >= 6) {
+        alert("You can select maximum 6 seats");
+        return prev;
+      }
+
+      return [...prev, seat.id];
+    });
   };
 
-  /* 💰 Calculate total */
+  /* 💰 Total price */
   const total = selected.reduce((sum, id) => {
-    const seat = seatsData.find((s) => s.id === id);
-    return sum + seatPrices[seat.type];
+    const seat = seatMap[id];
+    return seat ? sum + seatPrices[seat.type] : sum;
   }, 0);
 
-  /* 🧠 Save seats to context */
+  /* 🎟 Confirm booking */
   const handleConfirm = () => {
-    const selectedSeats = selected.map((id) => {
-      const seat = seatsData.find((s) => s.id === id);
-      return seat.label;
-    });
+    const selectedSeats = selected.map((id) => seatMap[id].label);
 
-    setSeats(selectedSeats, total);
-    // console.log(selectedSeats,total);
-    navigate("/checkout"); 
+    navigate("/checkout", {
+      state: {
+        showId,
+        seats: selectedSeats,
+        total,
+      },
+    });
   };
 
-  /* 🪑 Group rows */
+  /* 🪑 Group seats by row */
   const groupedRows = seatsData.reduce((acc, seat) => {
     acc[seat.row] = acc[seat.row] || [];
     acc[seat.row].push(seat);
@@ -58,19 +77,19 @@ function SeatSelection() {
 
   return (
     <div className="seat-page container page-container">
+
       {/* 🎬 HEADER */}
       <div className="seat-header">
-        <h3>{booking.movie?.title}</h3>
+        <h3>Show ID: {showId}</h3>
         <p>
-          {booking.theatre?.name} • {booking.theatre?.date} •{" "}
-          {booking.showtime}
+          {new Date(show.showTime).toLocaleString()}
         </p>
       </div>
 
       {/* 🎥 SCREEN */}
       <div className="screen">SCREEN</div>
 
-      {/* 🪑 SEATS */}
+      {/* 🪑 SEAT LAYOUT */}
       <div className="seat-layout">
         {sortedRows.map((row) => (
           <div key={row} className="seat-row">
@@ -97,7 +116,7 @@ function SeatSelection() {
         ))}
       </div>
 
-      {/* 💰 PRICE LEGEND */}
+      {/* 💰 PRICE */}
       <div className="price-bar">
         <div className="price-item silver">Silver ₹150</div>
         <div className="price-item gold">Gold ₹220</div>
@@ -109,9 +128,7 @@ function SeatSelection() {
         <p>
           Seats:{" "}
           {selected.length
-            ? selected
-                .map((id) => seatsData.find((s) => s.id === id)?.label)
-                .join(", ")
+            ? selected.map((id) => seatMap[id]?.label).sort().join(", ")
             : "None"}
         </p>
 
@@ -130,24 +147,24 @@ function SeatSelection() {
     </div>
   );
 
- function renderSeat(seat) {
-  return (
-    <button
-      key={seat.id}
-      className={`seat-icon
-        ${seat.booked ? "reserved" : "available"}
-        ${selected.includes(seat.id) ? "selected" : ""}
-      `}
-      onClick={() => toggleSeat(seat)}
-      disabled={seat.booked}
-      title={seat.label}
-    >
-      <span className="seat-back"></span>
-      <span className="seat-bottom"></span>
-    </button>
-  );
-}
-
+  /* 🎟 Seat renderer */
+  function renderSeat(seat) {
+    return (
+      <button
+        key={seat.id}
+        className={`seat-icon
+          ${seat.booked ? "reserved" : "available"}
+          ${selected.includes(seat.id) ? "selected" : ""}
+        `}
+        onClick={() => toggleSeat(seat)}
+        disabled={seat.booked}
+        title={seat.label}
+      >
+        <span className="seat-back"></span>
+        <span className="seat-bottom"></span>
+      </button>
+    );
+  }
 }
 
 export default SeatSelection;

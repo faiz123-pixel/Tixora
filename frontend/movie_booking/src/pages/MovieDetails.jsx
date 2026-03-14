@@ -2,11 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate,useLocation } from "react-router-dom";
 import MovieGrid from "../components/movies/MovieGrid";
 import "./css/MovieDetails.css";
+import { movieApi } from "../services/api";
 
-
-const API_KEY = "a84c9863d3bfde07f9537e1751f6f2d1";
-const BASE_URL = "https://api.themoviedb.org/3";
-const IMAGE_BASE = "https://image.tmdb.org/t/p/w500";
 
 function MovieDetails() {
   const { id } = useParams();
@@ -30,43 +27,30 @@ const passedMovie = location.state?.movie;
       setLoading(true);
 
       /* 🎬 Movie Details */
-      const movieRes = await fetch(
-        `${BASE_URL}/movie/${id}?api_key=${API_KEY}&language=en-US`
-      );
-      const movieData = await movieRes.json();
+      const movieRes = await movieApi.get(`/${id}`);
+      const movieData = await movieRes.data;
       
       setMovie({
         id: movieData.id,
         title: movieData.title,
-        poster: IMAGE_BASE + movieData.poster_path,
-        overview: movieData.overview,
-        rating: movieData.vote_average.toFixed(1),
-        category: movieData.genres[0]?.name || "Movie",
+        poster: movieData.posterUrl,
+        overview: movieData.description,
+        rating: 4,
+        category: movieData.genre || "Movie",
       });
       
-      /* 🎥 Trailer */
-      const videoRes = await fetch(
-        `${BASE_URL}/movie/${id}/videos?api_key=${API_KEY}`
-      );
-      const videoData = await videoRes.json();
-      // console.log(videoData);
-      
-      const youtubeTrailer = videoData.results.find(
-        (v) => v.type === "Trailer" && v.site === "YouTube"
-      );
-      setTrailer(youtubeTrailer?.key || null);
-
-      /* 🔥 Related Movies */
-      const relatedRes = await fetch(
-        `${BASE_URL}/movie/${id}/similar?api_key=${API_KEY}`
-      );
-      const relatedData = await relatedRes.json();
-
+        setTrailer( null);
+        
+        /* 🔥 Related Movies */
+        const relatedRes = await movieApi.get(`/genre/${id}`);
+        const relatedData = await relatedRes.data;
+        
+        // console.log(relatedData);
       setRelatedMovies(
-        relatedData.results.map((m) => ({
+        relatedData.map((m) => ({
           id: m.id,
           title: m.title,
-          poster: IMAGE_BASE + m.poster_path,
+          poster: m.posterUrl,
         }))
       );
     } catch (err) {
@@ -120,7 +104,7 @@ const passedMovie = location.state?.movie;
 
           <button
             className="book-btn"
-            onClick={() => navigate(`/theatres/${1}`)}
+            onClick={() => navigate(`/theatres/${movie.id}`)}
           >
             Book Tickets
           </button>

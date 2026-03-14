@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import "./css/Login.css";
 import { loginApi } from "../services/api";
+import { LoginContext } from "../context/LoginContext";
 
 function Login() {
   const navigate = useNavigate();
   const [captcha, setCaptcha] = useState("");
+  const {login} = useContext(LoginContext);
 
   const {
     register,
@@ -42,13 +44,21 @@ function Login() {
       console.log(data);
       const res=await loginApi.post("",data);
       console.log(res.data);
+      login(res.data.userDto,res.data.token)
+      alert("Login Successfull")
+
+      if(res.data.userDto.role.roleName==="ROLE_USER")
+      navigate("/")
+    else
+      navigate("/admin")
+
     } catch (error) {
       alert(error.message);
 
       
     }
     clearErrors();
-    navigate("/admin"); // redirect after login
+    // navigate("/admin"); // redirect after login
   };
 
   return (

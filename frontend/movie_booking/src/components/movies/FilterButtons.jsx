@@ -1,7 +1,7 @@
 import React from "react";
 
 function FilterButtons({ active, setActive }) {
-  const filters = ["All", "Action", "Sci-Fi", "Drama"];
+  const filters = ["All", "Action", "Sci-Fi", "Drama","Comedy","Horror","Thriller","Adventure","Animation","Fantasy"];
 
   return (
     <div style={styles.container}>

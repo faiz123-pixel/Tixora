@@ -6,17 +6,7 @@ import MovieGrid from "../components/movies/MovieGrid";
 import { useBookingContext } from "../context/BookingContext";
 import moviesData from "../data/movies"
 import "./css/Home.css";
-
-const BASE_URL = "https://api.themoviedb.org/3";
-const IMAGE_BASE = "https://image.tmdb.org/t/p/w500";
-const API_KEY = "a84c9863d3bfde07f9537e1751f6f2d1";
-
-/* 🎭 GENRE MAP */
-const GENRE_MAP = {
-  28: "Action",
-  878: "Sci-Fi",
-  18: "Drama",
-};
+import { movieApi } from "../services/api";
 
 function Home() {
   const navigate = useNavigate();
@@ -31,36 +21,30 @@ function Home() {
     fetchMovies();
   }, []);
 
-  const fetchMovies = async () => {
-    try {
-      setLoading(true);
+ const fetchMovies = async () => {
+  try {
+    setLoading(true);
 
-      const res = await fetch(
-        `${BASE_URL}/movie/now_playing?api_key=${API_KEY}&language=en-US&page=1`
-      );
-      const data = await res.json();
+    const res = await movieApi.get("");
+    const data = res.data;
 
-      const formatted = data.results.map((m) => {
-        const genreId = m.genre_ids.find((id) => GENRE_MAP[id]);
+    console.log(data);
+    const formatted = data.map((m) => ({
+      id: m.id,
+      title: m.title,
+      poster: m.posterUrl,
+      category: m.genre,
+      isNew: m.isNew
+    }));
 
-        return {
-          id: m.id,
-          title: m.title,
-          poster: m.poster_path
-            ? IMAGE_BASE + m.poster_path
-            : "/placeholder.jpg",
-          category: GENRE_MAP[genreId] || "Drama",
-          isNew: true,
-        };
-      });
+    setMovies(formatted);
 
-      setMovies(formatted);
-    } catch (err) {
-      console.error("TMDB fetch error", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  } catch (err) {
+    console.error("API fetch error:", err);
+  } finally {
+    setLoading(false);
+  }
+};
 
   /* 🔍 FILTERING */
   const filteredMovies = movies.filter((movie) => {

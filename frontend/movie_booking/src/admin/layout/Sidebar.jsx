@@ -4,16 +4,16 @@ import logo from "../../assets/logo.png";
 function Sidebar({ isMobile, closeSidebar }) {
 
   const menuItems = [
-    { name: "Dashboard", path: "dashboard", icon: "📊" },
-    { name: "Movies", path: "movies", icon: "🎬" },
-    { name: "Theatres", path: "theatres", icon: "🏢" },
-    { name: "Screens", path: "screens", icon: "🖥️" },
-    { name: "Seats", path: "seats", icon: "💺" },
-    { name: "Shows", path: "shows", icon: "🎥" },
-    { name: "Bookings", path: "bookings", icon: "🎟️" },
-    { name: "BookingSeats", path: "booking-seats", icon: "🪑" },
-    { name: "Payments", path: "payments", icon: "💳" },
-    { name: "Users", path: "users", icon: "👑" },
+    { name: "Dashboard", path: "dashboard"},
+    { name: "Movies", path: "movies"},
+    { name: "Theatres", path: "theatres"},
+    { name: "Screens", path: "screens"},
+    { name: "Seats", path: "seats"},
+    { name: "Shows", path: "shows" },
+    { name: "Bookings", path: "bookings" },
+    { name: "BookingSeats", path: "booking-seats" },
+    { name: "Payments", path: "payments"},
+    { name: "Users", path: "users" },
     { name: "Messages", path: "messages", icon: "" },
   ];
 
