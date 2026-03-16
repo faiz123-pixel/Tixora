@@ -4,47 +4,37 @@ import { bookingSeatApi } from "../../services/api";
 
 function BookingSeats() {
   const [bookingSeats, setBookingSeats] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
   const [showFilter, setShowFilter] = useState("");
 
   useEffect(() => {
     loadBookingSeats();
   }, []);
 
-  useEffect(() => {
-    applyFilter();
-  }, [showFilter, bookingSeats]);
-
   const loadBookingSeats = async () => {
-  try {
-    const response = await bookingSeatApi.get("");
-    setBookingSeats(response.data || []);
-    setFilteredData(response.data || []);
-  } catch (error) {
-    console.error("Failed to load booking seats", error);
-    alert("Somthing went wrong");
-  }
-};
-
-  const applyFilter = () => {
-    let data = [...bookingSeats];
-
-    if (showFilter) {
-      data = data.filter((bs) => bs.show?.movieTitle === showFilter);
+    try {
+      const response = await bookingSeatApi.get("");
+      setBookingSeats(response.data ?? []);
+    } catch (error) {
+      console.error("Failed to load booking seats", error);
+      alert("Something went wrong");
     }
-
-    setFilteredData(data);
   };
 
+  const filteredData = showFilter
+    ? bookingSeats.filter((bs) => bs.show?.movieTitle === showFilter)
+    : bookingSeats;
+    console.log(filteredData);
+
   const uniqueShows = [
-    ...new Set(bookingSeats.map((bs) => bs.show?.movieTitle).filter(Boolean)),
+    ...new Set(
+      bookingSeats.map((bs) => bs.show?.movieTitle).filter(Boolean)
+    ),
   ];
 
   return (
     <div className="booking-seats-container">
       <h2>Booking Seats</h2>
 
-      {/* ===== Filter ===== */}
       <div className="filter-section">
         <select
           value={showFilter}
@@ -59,7 +49,6 @@ function BookingSeats() {
         </select>
       </div>
 
-      {/* ===== Table ===== */}
       <table className="booking-seats-table">
         <thead>
           <tr>
@@ -69,6 +58,7 @@ function BookingSeats() {
             <th>Price (₹)</th>
           </tr>
         </thead>
+
         <tbody>
           {filteredData.length === 0 ? (
             <tr>
@@ -79,9 +69,9 @@ function BookingSeats() {
           ) : (
             filteredData.map((bs) => (
               <tr key={bs.id}>
-                <td>{bs.booking?.bookingNumber || "N/A"}</td>
-                <td>{bs.show?.movieTitle || "N/A"}</td>
-                <td>{bs.seat?.seatNumber || "N/A"}</td>
+                <td>{bs.booking?.id ?? "N/A"}</td>
+                <td>{bs.show.movie?.title ?? "N/A"}</td>
+                <td>{bs.seat?.seatNumber ?? "N/A"}</td>
                 <td className="price-cell">₹ {bs.price}</td>
               </tr>
             ))

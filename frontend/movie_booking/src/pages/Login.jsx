@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import "./css/Login.css";
 import { loginApi } from "../services/api";
@@ -7,8 +7,11 @@ import { LoginContext } from "../context/LoginContext";
 
 function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [captcha, setCaptcha] = useState("");
-  const {login} = useContext(LoginContext);
+  const { login } = useContext(LoginContext);
+  const from = location.state?.from || "/";
+  const checkoutData = location.state?.checkoutData;
 
   const {
     register,
@@ -30,7 +33,7 @@ function Login() {
   }, []);
 
   // ✅ Submit handler
-  const onSubmit =async (data) => {
+  const onSubmit = async (data) => {
     if (data.captcha !== captcha) {
       setError("captcha", {
         type: "manual",
@@ -40,25 +43,34 @@ function Login() {
       resetField("captcha");
       return;
     }
+
     try {
-      console.log(data);
-      const res=await loginApi.post("",data);
-      console.log(res.data);
-      login(res.data.userDto,res.data.token)
-      alert("Login Successfull")
+      const res = await loginApi.post("", data);
 
-      if(res.data.userDto.role.roleName==="ROLE_USER")
-      navigate("/")
-    else
-      navigate("/admin")
+      login(res.data.userDto, res.data.token);
 
+      alert("Login Successful");
+
+      // 🔐 Admin redirect
+      if (
+        res.data.userDto.role.userRole === "ROLE_ADMIN" ||
+        res.data.userDto.role.userRole === "ROLE_SUPER_ADMIN"
+      ) {
+        navigate("/admin");
+        return;
+      }
+
+      // 🎟️ If user came from checkout
+      if (from === "/checkout" && checkoutData) {
+        navigate("/checkout", { state: checkoutData });
+      } else {
+        navigate(from, { replace: true });
+      }
     } catch (error) {
-      alert(error.message);
-
-      
+      alert("Invalid mobile number or password");
     }
+
     clearErrors();
-    // navigate("/admin"); // redirect after login
   };
 
   return (
@@ -79,9 +91,7 @@ function Login() {
             },
           })}
         />
-        {errors.mobileNo && (
-          <p className="error">{errors.mobileNo.message}</p>
-        )}
+        {errors.mobileNo && <p className="error">{errors.mobileNo.message}</p>}
 
         {/* 🔑 Password */}
         <input
@@ -95,9 +105,7 @@ function Login() {
             },
           })}
         />
-        {errors.password && (
-          <p className="error">{errors.password.message}</p>
-        )}
+        {errors.password && <p className="error">{errors.password.message}</p>}
 
         {/* 🔢 Captcha */}
         <div className="captcha-row">
@@ -118,9 +126,7 @@ function Login() {
             required: "Captcha is required",
           })}
         />
-        {errors.captcha && (
-          <p className="error">{errors.captcha.message}</p>
-        )}
+        {errors.captcha && <p className="error">{errors.captcha.message}</p>}
 
         <button type="submit" className="login-btn">
           Login

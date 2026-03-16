@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import "./css/Dashboard.css";
 
 import {
@@ -9,7 +9,10 @@ import {
   paymentApi,
 } from "../../services/api";
 
+import { LoginContext } from "../../context/LoginContext"; // adjust path
+
 function Dashboard() {
+  const { user, isAuthenticated } = useContext(LoginContext);
   const [stats, setStats] = useState({
     movies: 0,
     theatres: 0,
@@ -22,46 +25,50 @@ function Dashboard() {
   });
 
   useEffect(() => {
-    loadDashboardStats();
-  }, []);
+    if (isAuthenticated) {
+      loadDashboardStats();
+    }
+  }, [isAuthenticated]);
 
   const loadDashboardStats = async () => {
     try {
-      const moviesRes = await movieApi.get("");
-      const theatresRes = await theatreApi.get("");
-      const showsRes = await showApi.get("");
-      const bookingsRes = await bookingApi.get("");
-      const paymentsRes = await paymentApi.get("");
+      const [moviesRes, theatresRes, showsRes, bookingsRes, paymentsRes] =
+        await Promise.all([
+          movieApi.get(""),
+          theatreApi.get(""),
+          showApi.get(""),
+          bookingApi.get(""),
+          paymentApi.get(""),
+        ]);
 
       const movies = moviesRes.data || [];
       const theatres = theatresRes.data || [];
       const shows = showsRes.data || [];
       const bookings = bookingsRes.data || [];
-      const payments = paymentsRes.data || [];
+      // const payments = paymentsRes.data || [];
 
-      // Total revenue (only successful payments)
-      const totalRevenue = payments
-        .filter((p) => p.status === "SUCCESS")
-        .reduce((sum, p) => sum + (p.amount || 0), 0);
+      // Total revenue from bookings
+      const totalRevenue = bookings
+        .filter((b) => b.status === "CONFIRMED") // only confirmed bookings
+        .reduce((sum, b) => sum + (b.totalAmount || 0), 0);
 
+      // Today's date
       const today = new Date().toDateString();
 
-      // Today's bookings
+      // Today's revenue from bookings
+      const todayRevenue = bookings
+        .filter(
+          (b) =>
+            b.status === "CONFIRMED" &&
+            new Date(b.dateTime).toDateString() === today,
+        )
+        .reduce((sum, b) => sum + (b.totalAmount || 0), 0);
+
       const todayBookings = bookings.filter(
-        (b) => new Date(b.dateTime).toDateString() === today
+        (b) => new Date(b.dateTime).toDateString() === today,
       );
 
-      // Today's revenue
-      const todayRevenue = payments
-        .filter(
-          (p) =>
-            p.status === "SUCCESS" &&
-            new Date(p.paidAt).toDateString() === today
-        )
-        .reduce((sum, p) => sum + (p.amount || 0), 0);
-
-      // Active cities
-      const cities = new Set(theatres.map((t) => t.city));
+      const activeCities = new Set(theatres.map((t) => t.city)).size;
 
       setStats({
         movies: movies.length,
@@ -71,16 +78,20 @@ function Dashboard() {
         revenue: totalRevenue,
         todayBookings: todayBookings.length,
         todayRevenue: todayRevenue,
-        activeCities: cities.size,
+        activeCities,
       });
     } catch (error) {
       console.error("Dashboard API error:", error);
     }
   };
 
+  if (!isAuthenticated) {
+    return <div>Please login to access the dashboard.</div>;
+  }
+
   return (
     <div className="dashboard-container">
-      <h2 className="dashboard-title">Super Admin Dashboard</h2>
+      <h2 className="dashboard-title">Welcome, {user?.name || "Admin"}!</h2>
       <p className="dashboard-subtitle">
         Complete control and overview of your movie booking system
       </p>

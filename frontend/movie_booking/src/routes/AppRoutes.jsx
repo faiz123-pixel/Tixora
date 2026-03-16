@@ -25,6 +25,7 @@ import Seats from "../admin/pages/Seats";
 import BookingSeats from "../admin/pages/BookingSeats";
 import Payments from "../admin/pages/Payments";
 import Messages from "../admin/pages/Message";
+import MyBookings from "../pages/MyBookings";
 
 
 const AppRoutes=createBrowserRouter(
@@ -41,6 +42,7 @@ const AppRoutes=createBrowserRouter(
         {path:"/seatSelection/:movieId", element:<SeatSelection/>},
         {path:"/checkout", element:<Checkout/>},
         {path:"/bookingSuccess", element:<BookingSuccess/>},
+        {path:"/my-bookings", element:<MyBookings/>},
       ]},
       /* ================= ADMIN ROUTES ================= */
   {

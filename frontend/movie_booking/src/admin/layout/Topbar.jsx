@@ -1,7 +1,10 @@
+import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { LoginContext } from "../../context/LoginContext";
 
 function Topbar({ isMobile, toggleSidebar }) {
   const navigate = useNavigate();
+  const { user, logout } = useContext(LoginContext);
 
   const styles = {
     topbar: {
@@ -40,9 +43,8 @@ function Topbar({ isMobile, toggleSidebar }) {
   };
 
   const handleLogout = () => {
-    // optional: clear auth data later
-    // localStorage.removeItem("token");
-    navigate("/");
+    logout(); // clear context and localStorage
+    navigate("/"); // redirect to login page
   };
 
   return (
@@ -51,7 +53,10 @@ function Topbar({ isMobile, toggleSidebar }) {
         <span style={styles.hamburger} onClick={toggleSidebar}>
           ☰
         </span>
-        <span style={styles.title}>Admin Dashboard</span>
+        <span style={styles.title}>
+          
+          {user ? `${user.role.userRole} : ${user.name}` : "Admin Dashboard"}
+        </span>
       </div>
 
       <button style={styles.logout} onClick={handleLogout}>

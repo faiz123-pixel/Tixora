@@ -1,22 +1,33 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import { useBookingContext } from "../context/BookingContext";
+import React, { useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import "./css/BookingSuccess.css";
 
 function BookingSuccess() {
   const navigate = useNavigate();
-  const { booking, clearBooking } = useBookingContext();
+  const location = useLocation();
 
-  const { movie, theatre, showtime, seats, total } = booking;
+  const { movie, theatre, show, seats = [], total } = location.state || {};
 
-  // 🔒 Safety check
-  if (!movie || !theatre || !seats.length) {
-    navigate("/");
-    return null;
-  }
+  /* 🔒 Prevent direct access */
+  useEffect(() => {
+    if (!movie || !theatre || seats.length === 0) {
+      navigate("/");
+    }
+  }, [movie, theatre, seats, navigate]);
+
+  if (!movie) return null;
+
+  /* 📅 Format date + time */
+  const formattedDateTime = new Date(show.showTime).toLocaleString("en-IN", {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 
   const handleGoHome = () => {
-    clearBooking();
     navigate("/");
   };
 
@@ -41,12 +52,12 @@ function BookingSuccess() {
 
           <div className="ticket-row">
             <span>Theatre</span>
-            <strong>{theatre}</strong>
+            <strong>{theatre.name}</strong>
           </div>
 
           <div className="ticket-row">
             <span>Showtime</span>
-            <strong>{showtime}</strong>
+            <strong>{formattedDateTime}</strong>
           </div>
 
           <div className="ticket-row">
@@ -64,6 +75,7 @@ function BookingSuccess() {
         <button className="home-btn" onClick={handleGoHome}>
           Go to Home
         </button>
+
       </div>
     </div>
   );

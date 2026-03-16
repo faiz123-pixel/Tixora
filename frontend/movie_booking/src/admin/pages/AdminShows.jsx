@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import "./css/AdminShows.css";
-import { movieApi, screenApi, showApi } from "../../services/api";
+import { movieApi, screenApi, showApi, theatreApi } from "../../services/api";
 
 function AdminShows() {
   const [shows, setShows] = useState([]);
   const [movies, setMovies] = useState([]);
   const [screens, setScreens] = useState([]);
+  const [theatres, setTheatres] = useState([]);
   const [editId, setEditId] = useState(null);
 
   const {
@@ -18,75 +19,76 @@ function AdminShows() {
   } = useForm();
 
   useEffect(() => {
-    loadShows();
-    loadMovies();
-    loadScreens();
+    loadAllData();
   }, []);
 
-  const loadShows = async () => {
-    const data = await showApi.get("");
-    console.log(data.data);
-    setShows(data.data || []);
-  };
+  // Load all data in parallel
+  const loadAllData = async () => {
+    try {
+      const [showsRes, moviesRes, screensRes, theatresRes] = await Promise.all([
+        showApi.get(""),
+        movieApi.get(""),
+        screenApi.get(""),
+        theatreApi.get(""),
+      ]);
 
-  const loadMovies = async () => {
-    const data = await movieApi.get("");
-    console.log(data.data);
-    setMovies(data.data || []);
-  };
-
-  const loadScreens = async () => {
-    const data = await screenApi.get("");
-    console.log(data.data);
-    setScreens(data.data || []);
-  };
-
-  const onSubmit = async (data) => {
-
-  try {
-    if (editId) {
-      await showApi.put(`/${editId}`, data);
-      setEditId(null);
-    } else {
-      await showApi.post("", data);
+      setShows(showsRes.data || []);
+      setMovies(moviesRes.data || []);
+      setScreens(screensRes.data || []);
+      setTheatres(theatresRes.data || []);
+    } catch (error) {
+      console.error("Error loading data", error);
+      alert("Something went wrong while loading data");
     }
+  };
 
-    reset();
-    loadShows();
-  } catch (error) {
-    console.error("Error saving show", error);
-    alert("Somthin went wrong");
-  }
-};
+  // Submit form
+  const onSubmit = async (data) => {
+    try {
+      if (editId) {
+        await showApi.put(`/${editId}`, data);
+        setEditId(null);
+      } else {
+        await showApi.post("", data);
+      }
+      reset();
+      loadAllData();
+    } catch (error) {
+      console.error("Error saving show", error);
+      alert("Something went wrong while saving show");
+    }
+  };
 
+  // Edit a show
   const handleEdit = (show) => {
     setEditId(show.id);
-
     setValue("movieId", show.movie?.id);
     setValue("screenId", show.screen?.id);
-    setValue(
-      "showTime",
-      show.showTime?.slice(0, 16) // required for datetime-local
-    );
+    setValue("showTime", show.showTime?.slice(0, 16)); // datetime-local
     setValue("basePrice", show.basePrice);
   };
 
+  // Delete a show
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this show?")) {
       await showApi.delete(`/${id}`);
-      loadShows();
+      loadAllData();
     }
   };
 
+  // Get movie title
   const getMovieName = (id) => {
-  const movie = movies.find((m) => m.id === id);
-  return movie ? movie.title : "N/A";
-};
+    const movie = movies.find((m) => m.id === id);
+    return movie ? movie.title : "N/A";
+  };
 
-const getScreenName = (id) => {
-  const screen = screens.find((s) => s.id === id);
-  return screen ? screen.name : "N/A";
-};
+  // Get screen name with theatre
+  const getScreenName = (id) => {
+    const screen = screens.find((s) => s.id === id);
+    if (!screen) return "N/A";
+    const theatre = theatres.find((t) => t.id === screen.theatreId);
+    return theatre ? `${screen.name} (${theatre.name})` : screen.name;
+  };
 
   return (
     <div className="shows-container">
@@ -94,7 +96,6 @@ const getScreenName = (id) => {
 
       {/* ===== FORM ===== */}
       <form onSubmit={handleSubmit(onSubmit)} className="show-form">
-        
         {/* Movie Dropdown */}
         <select {...register("movieId", { required: "Movie is required" })}>
           <option value="">-- Select Movie --</option>
@@ -109,11 +110,14 @@ const getScreenName = (id) => {
         {/* Screen Dropdown */}
         <select {...register("screenId", { required: "Screen is required" })}>
           <option value="">-- Select Screen --</option>
-          {screens.map((screen) => (
-            <option key={screen.id} value={screen.id}>
-              {screen.name}
-            </option>
-          ))}
+          {screens.map((screen) => {
+            const theatre = theatres.find((t) => t.id === screen.theatreId);
+            return (
+              <option key={screen.id} value={screen.id}>
+                {theatre ? `${screen.name} (${theatre.name})` : screen.name}
+              </option>
+            );
+          })}
         </select>
         {errors.screenId && <p className="error">{errors.screenId.message}</p>}
 
@@ -122,9 +126,7 @@ const getScreenName = (id) => {
           type="datetime-local"
           {...register("showTime", { required: "Show time is required" })}
         />
-        {errors.showTime && (
-          <p className="error">{errors.showTime.message}</p>
-        )}
+        {errors.showTime && <p className="error">{errors.showTime.message}</p>}
 
         {/* Base Price */}
         <input
@@ -135,25 +137,22 @@ const getScreenName = (id) => {
             min: { value: 1, message: "Price must be greater than 0" },
           })}
         />
-        {errors.basePrice && (
-          <p className="error">{errors.basePrice.message}</p>
-        )}
+        {errors.basePrice && <p className="error">{errors.basePrice.message}</p>}
 
-        <button type="submit">
-          {editId ? "Update Show" : "Add Show"}
-        </button>
-
-        {editId && (
-          <button
-            type="button"
-            onClick={() => {
-              reset();
-              setEditId(null);
-            }}
-          >
-            Cancel
-          </button>
-        )}
+        <div className="form-buttons">
+          <button type="submit">{editId ? "Update Show" : "Add Show"}</button>
+          {editId && (
+            <button
+              type="button"
+              onClick={() => {
+                reset();
+                setEditId(null);
+              }}
+            >
+              Cancel
+            </button>
+          )}
+        </div>
       </form>
 
       {/* ===== TABLE ===== */}
@@ -182,16 +181,10 @@ const getScreenName = (id) => {
                 <td>{new Date(show.showTime).toLocaleString()}</td>
                 <td>₹{show.basePrice}</td>
                 <td>
-                  <button
-                    type="button"
-                    onClick={() => handleEdit(show)}
-                  >
+                  <button type="button" onClick={() => handleEdit(show)}>
                     Edit
                   </button>
-                  <button
-                    type="button"
-                    onClick={() => handleDelete(show.id)}
-                  >
+                  <button type="button" onClick={() => handleDelete(show.id)}>
                     Delete
                   </button>
                 </td>

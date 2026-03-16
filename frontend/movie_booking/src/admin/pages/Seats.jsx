@@ -6,7 +6,6 @@ function Seats() {
   const [seats, setSeats] = useState([]);
   const [filteredSeats, setFilteredSeats] = useState([]);
   const [screenFilter, setScreenFilter] = useState("");
-  const [typeFilter, setTypeFilter] = useState("");
 
   useEffect(() => {
     loadSeats();
@@ -14,7 +13,7 @@ function Seats() {
 
   useEffect(() => {
     applyFilters();
-  }, [screenFilter, typeFilter, seats]);
+  }, [screenFilter, seats]);
 
   const loadSeats = async () => {
     try {
@@ -23,27 +22,29 @@ function Seats() {
       setFilteredSeats(response.data);
     } catch (error) {
       console.error("Failed to load seats", error);
-      alert("Somthing went wrong");
+      alert("Something went wrong");
     }
   };
 
   const applyFilters = () => {
     const filtered = seats.filter((seat) => {
-      return (
-        (!screenFilter || seat.screen?.name === screenFilter) &&
-        (!typeFilter || seat.type === typeFilter)
-      );
+      return !screenFilter || `${seat.screen?.name} (${seat.screen?.theatre?.name})` === screenFilter;
     });
 
     setFilteredSeats(filtered);
   };
 
-  // Unique screen list
+  // Unique screen list with theatre names
   const uniqueScreens = [
-    ...new Set(seats.map((seat) => seat.screen?.name).filter(Boolean)),
+    ...new Set(
+      seats
+        .map((seat) => seat.screen?.name && seat.screen?.theatre?.name
+          ? `${seat.screen.name} (${seat.screen.theatre.name})`
+          : null
+        )
+        .filter(Boolean)
+    ),
   ];
-
-  const uniqueTypes = [...new Set(seats.map((seat) => seat.type))];
 
   return (
     <div className="seats-container">
@@ -62,18 +63,6 @@ function Seats() {
             </option>
           ))}
         </select>
-
-        <select
-          value={typeFilter}
-          onChange={(e) => setTypeFilter(e.target.value)}
-        >
-          <option value="">All Types</option>
-          {uniqueTypes.map((type, index) => (
-            <option key={index} value={type}>
-              {type}
-            </option>
-          ))}
-        </select>
       </div>
 
       {/* ===== TABLE ===== */}
@@ -81,14 +70,13 @@ function Seats() {
         <thead>
           <tr>
             <th>Seat Number</th>
-            <th>Screen</th>
-            <th>Type</th>
+            <th>Screen (Theatre)</th>
           </tr>
         </thead>
         <tbody>
           {filteredSeats.length === 0 ? (
             <tr>
-              <td colSpan="3" className="empty-row">
+              <td colSpan="2" className="empty-row">
                 No seats found
               </td>
             </tr>
@@ -96,8 +84,9 @@ function Seats() {
             filteredSeats.map((seat) => (
               <tr key={seat.id}>
                 <td className="seat-number">{seat.seatNumber}</td>
-                <td>{seat.screen?.name}</td>
-                <td className="seat-type">{seat.type}</td>
+                <td>
+                  {seat.screen?.name} ({seat.screen?.theatre?.name})
+                </td>
               </tr>
             ))
           )}
